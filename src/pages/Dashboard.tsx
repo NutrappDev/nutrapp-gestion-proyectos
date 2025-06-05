@@ -5,6 +5,7 @@ import { KanbanColumn } from '../components/KanbanColumn/KanbanColumn';
 import { Header } from '../components/Layout/Header';
 import { Filters } from '../components/Filters/Filters';
 import { PaginationControls } from '../components/PaginationControls';
+import { useUsers } from '../hooks/useUsers';
 
 const DashboardContainer = styled.div`
   padding: 20px;
@@ -60,9 +61,10 @@ export const Dashboard = () => {
     pagination,
     updateFilter,
     resetFilters,
-    goToPage,
+    goToPage
   } = useIssues();
 
+  const { users, loading: usersLoading } = useUsers();
 
   useEffect(() => {
     console.log('Issues:', issues);
@@ -81,14 +83,10 @@ export const Dashboard = () => {
   }, [issues]);
 
   const assignees = useMemo(() => {
-    const userSet = new Set<string>();
-    issues.forEach(issue => {
-      if (typeof issue.assignee?.name === 'string' && issue.assignee?.name.trim() !== '') {
-        userSet.add(issue.assignee?.name);
-      }
-    });
-    return Array.from(userSet).sort((a, b) => a.localeCompare(b));
-  }, [issues]);
+    if (usersLoading) return [];
+    const userNames = users.map(user => user.name);
+    return ['equipodesarrollo', ...userNames].sort((a, b) => a.localeCompare(b));
+  }, [users, usersLoading]);
 
   const todoIssues = useMemo(() => 
     issues.filter(i => i.statusCategory === 'Por hacer'), 
@@ -115,7 +113,6 @@ export const Dashboard = () => {
   return (
     <>
       <DashboardContainer>
-        <Header title="JiraScope Dashboard" onRefresh={refresh} />
         <Filters
           projects={projects}
           assignees={assignees}
