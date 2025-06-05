@@ -32,6 +32,7 @@ export const Filters = ({
   onReset 
 }: FiltersProps) => {
 
+  const isTeamDevelopmentActive = currentFilters.assignee === 'equipodesarrollo';
 
   return (
     <FiltersContainer>
@@ -74,6 +75,23 @@ export const Filters = ({
           </MenuItem>
         ))}
       </TextField>
+
+      <Button
+        variant="outlined"
+        onClick={() => onFilterChange('assignee', 'equipodesarrollo')}
+        sx={{ 
+          height: 40,
+          borderColor: isTeamDevelopmentActive ? '#8a2be2' : '#0052cc',
+          borderWidth: 1,
+          color: isTeamDevelopmentActive ? '#8a2be2' : '#0052cc',
+          backgroundColor: isTeamDevelopmentActive ? '#f5f0ff' : 'transparent',
+          '&:hover': {
+            borderColor: isTeamDevelopmentActive ? '#8a2be2' : '#0052cc'
+          }
+        }}
+      >
+        Ver equipo de desarrollo
+      </Button>
 
       <Button
         variant="outlined"

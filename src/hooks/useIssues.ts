@@ -9,6 +9,15 @@ interface Pagination {
   isLast: boolean;
 }
 
+const TEAM_DEVELOPMENT = [
+  'camilo bastidas', 
+  'mario eraso', 
+  'kevin aguilera',
+  'richard medina', 
+  'isabel gomez', 
+  'alejandra pedraza', 
+  'david sarmiento'
+];
 
 export const useIssues = () => {
   const [issues, setIssues] = useState<JiraIssue[]>([]);
@@ -30,7 +39,10 @@ export const useIssues = () => {
       setLoading(true);
       console.log(filters.assignee)
       const { issues, total, isLast } = await fetchIssues({
-        project: filters.project
+        project: filters.project,
+        assignee: filters.assignee === 'equipodesarrollo' ? TEAM_DEVELOPMENT : filters.assignee,
+        page,
+        pageSize: pagination.pageSize
       });
 
       setIssues(issues);
