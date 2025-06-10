@@ -7,7 +7,7 @@ const PaginationContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 8px 16px;
-  background: #f5f5f5;
+  background: transparent;
   border-radius: 8px;
   margin-bottom: 16px;
 `;

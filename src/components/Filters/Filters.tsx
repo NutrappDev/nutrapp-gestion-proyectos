@@ -1,16 +1,24 @@
 import styled from '@emotion/styled';
-import { Button, TextField, MenuItem } from '@mui/material';
+import { Button } from '@mui/material';
+import { RestartAlt } from '@mui/icons-material';
+import CustomSelectField from './CustomSelectField';
 
 const FiltersContainer = styled.div`
   display: flex;
-  gap: 16px;
-  padding: 16px;
-  background: #ffffff;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: 10px 8px;
+  background: #FCF9FF;
+  border: 1px solid #1118270d;
+  border-radius: 12px;
+  margin: 16px 0;
   flex-wrap: wrap;
   align-items: flex-end;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+`;
+
+const FiltersContents = styled.div`
+  display: flex;
+  gap: 16px;
 `;
 
 interface FiltersProps {
@@ -36,76 +44,76 @@ export const Filters = ({
 
   return (
     <FiltersContainer>
-      <TextField
-        select
-        label="Filtrar por proyecto"
-        value={currentFilters.project || ''}
-        onChange={(e) => onFilterChange('project', e.target.value)}
-        variant="outlined"
-        size="small"
-        sx={{ 
-          minWidth: 200,
-          backgroundColor: '#fff'
-        }}
-      >
-        <MenuItem value="">Todos los proyectos</MenuItem>
-        {projects.map((project) => (
-          <MenuItem key={project} value={project}>
-            {project}
-          </MenuItem>
-        ))}
-      </TextField>
+      <FiltersContents>
+        <CustomSelectField
+          label="Filtrar por proyecto"
+          value={currentFilters.project || ''}
+          onChange={(e) => onFilterChange('project', e.target.value)}
+          InputLabelProps={{
+            shrink: false,
+            style: currentFilters.project
+              ? { display: 'none' }
+              : undefined
+          }}
+          options={[
+            { value: '', label: 'Todos los proyectos' },
+            ...projects.map((project) => ({ value: project, label: project })),
+          ]}
+        />
 
-      <TextField
-        select
+      <CustomSelectField
         label="Filtrar por asignado"
         value={currentFilters.assignee || ''}
         onChange={(e) => onFilterChange('assignee', e.target.value)}
-        variant="outlined"
-        size="small"
-        sx={{ 
-          minWidth: 200,
-          backgroundColor: '#fff'
+        InputLabelProps={{
+          shrink: false,
+          style: currentFilters.assignee
+            ? { display: 'none' }
+            : undefined
         }}
-      >
-        <MenuItem value="">Todos los asignados</MenuItem>
-        {assignees.map((assignee) => (
-          <MenuItem key={assignee} value={assignee}>
-            {assignee}
-          </MenuItem>
-        ))}
-      </TextField>
+        options={[
+          { value: '', label: 'Todos los asignados' },
+          ...assignees.map((assignee) => ({ value: assignee, label: assignee })),
+        ]}
+      />
 
       <Button
         variant="outlined"
-        onClick={() => onFilterChange('assignee', 'equipodesarrollo')}
+        onClick={() => onFilterChange('assignee', 'Equipo-Desarrollo')}
         sx={{ 
           height: 40,
-          borderColor: isTeamDevelopmentActive ? '#8a2be2' : '#0052cc',
+          borderColor: isTeamDevelopmentActive ? '#8a2be2' : '#000',
           borderWidth: 1,
-          color: isTeamDevelopmentActive ? '#8a2be2' : '#0052cc',
-          backgroundColor: isTeamDevelopmentActive ? '#f5f0ff' : 'transparent',
+          fontSize: 12,
+          color: isTeamDevelopmentActive ? '#8a2be2' : '#000000',
+          backgroundColor: isTeamDevelopmentActive ? '#f5f0ff': '#ffffff',
           '&:hover': {
-            borderColor: isTeamDevelopmentActive ? '#8a2be2' : '#0052cc'
+            borderColor: isTeamDevelopmentActive ? '#8a2be2' : '#f5f0ff'
           }
         }}
       >
         Ver equipo de desarrollo
       </Button>
 
+      </FiltersContents>
       <Button
         variant="outlined"
         onClick={onReset}
+        endIcon={<RestartAlt fontSize="small"/>}
         sx={{ 
           height: 40,
-          borderColor: '#0052cc',
-          color: '#0052cc',
+          border: 'none',
+          color: '#ffffff',
+          fontSize: 12,
+          backgroundColor: `#362D4C`,
+          borderRadius: 2,
           '&:hover': {
-            borderColor: '#0052cc'
+            borderColor: '#ffffff'
           }
         }}
       >
         Limpiar filtros
+        
       </Button>
     </FiltersContainer>
   );

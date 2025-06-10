@@ -1,11 +1,13 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
+import InfiniteScroll from "react-infinite-scroll-component";
+import CircularProgress from '@mui/material/CircularProgress';
 import { useIssues } from '../hooks/useIssues';
 import { KanbanColumn } from '../components/KanbanColumn/KanbanColumn';
-import { Header } from '../components/Layout/Header';
 import { Filters } from '../components/Filters/Filters';
-import { PaginationControls } from '../components/PaginationControls';
 import { useUsers } from '../hooks/useUsers';
+import { useProjects } from '../hooks/useProjects';
+import type { JiraIssue } from '../types/jira';
 
 const DashboardContainer = styled.div`
   padding: 20px;
@@ -23,7 +25,7 @@ const ColumnsContainer = styled.div`
   overflow-x: auto;
   padding: 16px 0;
   flex: 1;
-  
+  overflow: 'auto';
   @media (max-width: 768px) {
     flex-direction: column;
   }
@@ -31,7 +33,6 @@ const ColumnsContainer = styled.div`
 
 const LoadingMessage = styled.div`
   text-align: center;
-  padding: 40px;
   font-size: 1.2rem;
   color: #5e6c84;
   flex: 1;
@@ -53,115 +54,143 @@ const ErrorMessage = styled.div`
 
 export const Dashboard = () => {
   const { 
-    issues, 
+    issues,
     loading, 
     error, 
-    refresh,
     filters,
-    pagination,
     updateFilter,
     resetFilters,
+    pagination,
     goToPage
   } = useIssues();
-
+  const [page, setPage] = useState(1);
   const { users, loading: usersLoading } = useUsers();
+  const { projects, loading: projectLoading } = useProjects();
 
-  useEffect(() => {
-    console.log('Issues:', issues);
-    console.log('All Issues:', issues);
-    console.log('Filters:', filters);
-  }, [issues, issues, filters]);
   
-  const projects = useMemo(() => {
-    const projectSet = new Set<string>();
-    issues.forEach(issue => {
-      if (typeof issue.project === 'string' && issue.project.trim() !== '') {
-        projectSet.add(issue.project);
-      }
-    });
-    return Array.from(projectSet).sort((a, b) => a.localeCompare(b));
-  }, [issues]);
+  const allProjects = useMemo(() => {
+    if (projectLoading) return [];
+    const projectNames = projects.map(project => project.name);
+    return [...projectNames].sort((a, b) => a.localeCompare(b));
+  }, [projects, projectLoading]);
 
   const assignees = useMemo(() => {
     if (usersLoading) return [];
     const userNames = users.map(user => user.name);
-    return ['equipodesarrollo', ...userNames].sort((a, b) => a.localeCompare(b));
+    return ['Equipo-Desarrollo', ...userNames].sort((a, b) => a.localeCompare(b));
   }, [users, usersLoading]);
 
+  const sortByDueDate = (a: JiraIssue, b: JiraIssue) => {
+    if (!a.duedate) return 1;
+    if (!b.duedate) return -1;
+    return new Date(a.duedate).getTime() - new Date(b.duedate).getTime();
+  };
+
+
   const todoIssues = useMemo(() => 
-    issues.filter(i => i.statusCategory === 'Por hacer'), 
+    issues.filter(i => i.statusCategory === 'Por hacer').sort(sortByDueDate), 
     [issues]
   );
-  
-  const inProgressIssues = useMemo(() => 
-    issues.filter(i => i.statusCategory === 'En curso'), 
+
+  const inProgressIssues = useMemo(() =>
+    issues.filter(i =>
+        i.statusCategory === 'En curso' && i.status !== 'Esperando aprobación'
+    ).sort(sortByDueDate),
     [issues]
   );
-  
-  const doneIssues = useMemo(() => 
-    issues.filter(i => i.statusCategory === 'Listo'), 
+
+  const doneIssues = useMemo(() =>
+    issues.filter(i =>
+      i.statusCategory === 'En curso' && i.status === 'Esperando aprobación'
+    ).sort(sortByDueDate),
     [issues]
   );
+
+  const totalTodoHours = useMemo(() => 
+    todoIssues.reduce((sum, issue) => sum + (Number(issue.storyPoints) || 0), 0), 
+    [todoIssues]
+  );
+
+  const totalInProgressHours = useMemo(() => 
+    inProgressIssues.reduce((sum, issue) => sum + (Number(issue.storyPoints) || 0), 0), 
+    [inProgressIssues]
+  );
+
+  const totalDoneHours = useMemo(() => 
+    doneIssues.reduce((sum, issue) => sum + (Number(issue.storyPoints) || 0), 0), 
+    [doneIssues]
+  );
+
+  const loadMoreIssues = () => {
+    if (!pagination.isLast && !loading) {
+      goToPage(pagination.page+1);
+    }
+  };
   
   if (error) return (
     <>
-      <Header title="JiraScope Dashboard" onRefresh={refresh} />
       <ErrorMessage>Error: {error}</ErrorMessage>
     </>
   );
 
   return (
     <>
-      <DashboardContainer>
+      <DashboardContainer >
+        <h1 className="pt-4 pb-8 bg-gradient-to-r from-[#4E3762] via-[#534379] to-[#BBACD1] bg-clip-text text-center text-4xl font-normal tracking-tight text-transparent md:text-7xl"
+        style={{ fontWeight: 500 }}>
+          TeamBoard
+        </h1>
         <Filters
-          projects={projects}
+          projects={allProjects}
           assignees={assignees}
           currentFilters={filters}
           onFilterChange={updateFilter}
           onReset={resetFilters}
         />
 
-        <PaginationControls
-          currentPage={pagination.page}
-          pageSize={pagination.pageSize}
-          totalItems={pagination.total}
-          isLast={pagination.isLast}
-          onPageChange={goToPage}
-        />
 
-        {loading ?(
-          <LoadingMessage>Cargando incidencias...</LoadingMessage>
-        ):(
-          <ColumnsContainer>
+       <ColumnsContainer>
           <KanbanColumn 
             title="Backlog" 
             issues={todoIssues} 
             onFilterChange={updateFilter}
-            titleColor="#000000"
-            borderColor="#aaa9a9"
-            bgColor="#c9c9c9"
-            lightBgColor="#f0f7ff"
+            totalHours={totalTodoHours}
+            titleColor="#373448"
+            borderColor="#857C99"
+            bgColor="#D5D4DF"
+            lightBgColor="#F6F6FA"
+            onLoadMore={loadMoreIssues}
+            hasMoreItems={!pagination.isLast}
+            isLoading={loading}
           />
           <KanbanColumn 
             title="En progreso" 
             issues={inProgressIssues} 
             onFilterChange={updateFilter}
-            titleColor="#000000"
-            borderColor="#f6c16b"
-            bgColor="#f3e3c1"
-            lightBgColor="#fdf4e6"
+            totalHours={totalInProgressHours}
+            titleColor="#362D4C"
+            borderColor="#f6b46b"
+            bgColor="#FFE9D1"
+            lightBgColor="#F6F6FA"
+            onLoadMore={loadMoreIssues}
+            hasMoreItems={!pagination.isLast}
+            isLoading={loading}
           />
           <KanbanColumn 
             title="Esperando Aprobacion" 
             issues={doneIssues} 
             onFilterChange={updateFilter}
-            titleColor="#000000"
-            borderColor="#69e5ab"
-            bgColor="#c1eece"
-            lightBgColor="#dff9e8"
+            totalHours={totalDoneHours}
+            titleColor="#362D4C"
+            borderColor="#65D9A9"
+            bgColor="#C7EFE2"
+            lightBgColor="#F6F6FA"
+            onLoadMore={loadMoreIssues}
+            hasMoreItems={!pagination.isLast}
+            isLoading={loading}
           />
         </ColumnsContainer>
-        )}
+
       </DashboardContainer>
     </>
   );
