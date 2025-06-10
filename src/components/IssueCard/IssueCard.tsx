@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import type { JiraIssue } from '../../types/jira';
-import { useIssues } from '../../hooks/useIssues';
 
 interface IssueCardProps {
   issue: JiraIssue;
@@ -10,7 +9,7 @@ interface IssueCardProps {
 
 
 const Card = styled.div`
-  background: white;
+  background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   padding: 12px;
@@ -18,14 +17,24 @@ const Card = styled.div`
   gap: 12px;
   align-items: center;
   transition: transform 0.2s;
-  max-width: 300px;
+  max-width: 320px;
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   }
 `;
 
-const AvatarCircle = styled.div<{ color: string }>`
+const AvatarImage = styled.img`
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  flex-shrink: 0;
+  background-color: #f0f0f0; // Color de fondo por si la imagen no carga
+`;
+
+const AvatarFallback = styled.div<{ color: string }>`
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -36,8 +45,7 @@ const AvatarCircle = styled.div<{ color: string }>`
   justify-content: center;
   font-weight: bold;
   font-size: 14px;
-  flex-shrink: 0;
-  cursor: pointer; 
+  cursor: pointer;
 `;
 
 const Content = styled.div`
@@ -52,9 +60,10 @@ const KeyRow = styled.div`
 `;
 
 const IssueKey = styled.span`
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #5e6c84;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #171818;
+  cursor: pointer;
 `;
 
 const HoursBadge = styled.span`
@@ -66,13 +75,33 @@ const HoursBadge = styled.span`
 `;
 
 const Summary = styled.h3`
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 500;
   margin: 0;
-  color: #172b4d;
+  color: #717886;
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: pointer;
   -webkit-line-clamp: 2;
+`;
+
+const FlexContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+`;
+
+const DateBadge = styled.div`
+  color: #5E6C84;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: #F4F5F7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  min-width: 40px;
+  text-align: center;
 `;
 
 const stringToColor = (str: string) => {
@@ -87,6 +116,9 @@ const stringToColor = (str: string) => {
 export const IssueCard = ({ issue, updateAssigneeFilter }: IssueCardProps) => {
   const initials = issue.assignee?.initials || 'NA';
   const bgColor = stringToColor(initials);
+  const formattedDate = issue.duedate 
+  ? issue.duedate.slice(8, 10) + '/' + issue.duedate.slice(5, 7)
+  : 'Sin fecha';
   
 
   const handleAssigneeClick = () => {
@@ -98,21 +130,32 @@ export const IssueCard = ({ issue, updateAssigneeFilter }: IssueCardProps) => {
 
   return (
     <Card aria-labelledby={`issue-${issue.key}-summary`}>
-      <AvatarCircle 
-        color={bgColor}
-        onClick={handleAssigneeClick}
-      >
-        {initials}
-      </AvatarCircle>
+      {issue.assignee?.avatar ? (
+        <AvatarImage 
+          src={issue.assignee.avatar}
+          alt={`Avatar de ${issue.assignee.name}`}
+          onClick={handleAssigneeClick}
+        />
+      ) : (
+        <AvatarFallback 
+          color={bgColor}
+          onClick={handleAssigneeClick}
+        >
+          {initials}
+        </AvatarFallback>
+      )}
       
       <Content>
         <KeyRow>
-          <IssueKey>{issue.key}</IssueKey>
-          {issue.storyPoints! > 0 && (
+          <IssueKey onClick={() => window.open(issue.url, '_blank')}>{issue.key}</IssueKey>
+          <FlexContainer>
+            <DateBadge>{formattedDate}</DateBadge>
+            {issue.storyPoints! > 0 && (
             <HoursBadge>{issue.storyPoints}h</HoursBadge>
           )}
+          </FlexContainer>
         </KeyRow>
-        <Summary id={`issue-${issue.key}-summary`}>
+        <Summary id={`issue-${issue.key}-summary`} onClick={() => window.open(issue.url, '_blank')}>
           {issue.summary}
         </Summary>
       </Content>
