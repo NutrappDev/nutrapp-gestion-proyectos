@@ -15,7 +15,7 @@ const TEAM_DEVELOPMENT = [
   'kevin aguilera',
   'richard medina', 
   'isabel gomez', 
-  'alejandra pedraza', 
+  'maria alejandra pedraza cardenas', 
   'david sarmiento'
 ];
 
@@ -40,12 +40,12 @@ export const useIssues = () => {
       console.log(filters.assignee)
       const { issues, total, isLast } = await fetchIssues({
         project: filters.project,
-        assignee: filters.assignee === 'equipodesarrollo' ? TEAM_DEVELOPMENT : filters.assignee,
+        assignee: filters.assignee === 'Equipo-Desarrollo' ? TEAM_DEVELOPMENT : filters.assignee,
         page,
         pageSize: pagination.pageSize
       });
 
-      setIssues(issues);
+      setIssues(prev => page === 1 ? issues : [...prev, ...issues]);
       setPagination(prev => ({
         ...prev,
         page,

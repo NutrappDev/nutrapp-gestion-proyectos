@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { JiraUsers, JiraIssue } from '../types/jira';
+import type { JiraUsers, JiraIssue, JiraProject } from '../types/jira';
 
 const API_BASE_URL = 'http://localhost:3001/api';
 
@@ -36,7 +36,16 @@ export const fetchIssues = async (params: FetchIssuesParams): Promise<{
 export const fetchUsers = async (): Promise<JiraUsers[]> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/issues/users`);
-    console.log("response", response)
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw error;
+  }
+};
+
+export const fetchProjects = async (): Promise<JiraProject[]> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/issues/projects`);
     return response.data;
   } catch (error) {
     console.error('Error fetching users:', error);
