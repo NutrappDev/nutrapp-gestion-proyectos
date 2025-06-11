@@ -53,19 +53,26 @@ body {
 
 // Scroll personalizado
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #ffffff;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+  background: linear-gradient(
+    to bottom,
+    #c8b6ff,
+    #e1dcee
+  );
+  border-radius: 10px;
+  border: 2px solid white;
+  background-size: 100% 100%;
+  background-position: top;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: #c5c1d4;
 }

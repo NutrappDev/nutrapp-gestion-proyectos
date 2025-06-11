@@ -32,40 +32,21 @@ const CustomSelectField: React.FC<CustomSelectFieldProps> = ({
               overflowY: 'auto',
               gap: '8px',
             },
-            component: ({ children, ...props }) => (
-            <div
-                {...props}
-                style={{
-                backgroundColor: '#FCF9FF',
-                padding: '8px',
-                borderRadius: '8px',
-                gap: '8px',
-                }}
-            >
-                <div
-                style={{
-                    maxHeight: '250px',
-                    overflowY: 'auto',
-                    gap: '8px',
-                }}
-                >
-                {children}
-                </div>
-            </div>
-            ),
             sx: {
               backgroundColor: '#ffffff',
-              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+              boxShadow:' 3px 4px 4px rgba(0, 0, 0, 0.05), -2px -3px 4px rgba(0, 0, 0, 0.05)',
               mt: 1,
+              padding: '8px',
               '&::-webkit-scrollbar': {
-                width: '8px',
+                width: '10px',
                 height: '8px',
                 backgroundColor: 'transparent',
               },
               '&::-webkit-scrollbar-thumb': {
                 backgroundColor: '#9E9E9E',
                 borderRadius: '10px',
-                border: '2px solid transparent',
+                borderBlock: '8px solid white',
+                borderRight: '4px solid white'
               },
               '&::-webkit-scrollbar-track': {
                 backgroundColor: 'transparent',
@@ -103,7 +84,10 @@ const CustomSelectField: React.FC<CustomSelectFieldProps> = ({
         minWidth: 200,
         color: '#1C1236',
         '& .MuiSelect-icon': { color: '#1C1236' },
-        '& .MuiInputLabel-root': { color: '#1C1236' },
+        '& .MuiInputLabel-root': {
+          textAlign: 'start',
+          color: '#1C1236' 
+        },
         '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
           color: '#1C1236',
         },
