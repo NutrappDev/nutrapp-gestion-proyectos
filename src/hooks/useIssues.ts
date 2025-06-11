@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { fetchIssues } from '../api/jiraApi';
+import { TEAM_DEVELOPMENT } from '../constants/team';
 import type { JiraIssue } from '../types/jira';
 
 interface Pagination {
@@ -9,15 +10,7 @@ interface Pagination {
   isLast: boolean;
 }
 
-const TEAM_DEVELOPMENT = [
-  'camilo bastidas', 
-  'mario eraso', 
-  'kevin aguilera',
-  'richard medina', 
-  'isabel gomez', 
-  'maria alejandra pedraza cardenas', 
-  'david sarmiento'
-];
+
 
 export const useIssues = () => {
   const [issues, setIssues] = useState<JiraIssue[]>([]);
@@ -40,7 +33,7 @@ export const useIssues = () => {
       console.log(filters.assignee)
       const { issues, total, isLast } = await fetchIssues({
         project: filters.project,
-        assignee: filters.assignee === 'Equipo-Desarrollo' ? TEAM_DEVELOPMENT : filters.assignee,
+        assignee: filters.assignee ? filters.assignee : TEAM_DEVELOPMENT,
         page,
         pageSize: pagination.pageSize
       });

@@ -22,11 +22,14 @@ const ColumnContainer = styled.div<{
   lightBgColor: string;
 }>`
   flex: 1;
+  display: inline-grid;
+  justify-content: center;
   text-align: start;
 `;
 
 const ColumnContent = styled.div<{borderColor: string; lightBgColor: string;}>`
-  min-width: 300px;
+  min-width: 320px;
+  width: 30vw;
   min-height: 300px;
   height: 60vh;
   background: ${props => props.lightBgColor};
@@ -35,7 +38,7 @@ const ColumnContent = styled.div<{borderColor: string; lightBgColor: string;}>`
   padding-right: 3.5rem;
   margin: 0 8px;
   border: 2px solid ${props => props.borderColor};
-  box-shadow: 5px 5px 4px #e2e2e2, -5px -5px 4px rgb(255 255 255);
+  box-shadow: -5px 5px 4px #e2e2e2, 5px -5px 4px rgb(255 255 255);
   position: relative;
   overflow: hidden;
 `;

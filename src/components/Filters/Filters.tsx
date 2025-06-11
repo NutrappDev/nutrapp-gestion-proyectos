@@ -7,7 +7,7 @@ const FiltersContainer = styled.div`
   display: flex;
   padding: 10px 8px;
   background: #FCF9FF;
-  border: 1px solid #1118270d;
+  border: 1px solid #11182724;
   border-radius: 12px;
   margin: 16px 0;
   flex-wrap: wrap;
@@ -40,7 +40,6 @@ export const Filters = ({
   onReset 
 }: FiltersProps) => {
 
-  const isTeamDevelopmentActive = currentFilters.assignee === 'equipodesarrollo';
 
   return (
     <FiltersContainer>
@@ -63,7 +62,7 @@ export const Filters = ({
 
       <CustomSelectField
         label="Filtrar por asignado"
-        value={currentFilters.assignee || ''}
+        value={currentFilters.assignee?.toUpperCase() || ''}
         onChange={(e) => onFilterChange('assignee', e.target.value)}
         InputLabelProps={{
           shrink: false,
@@ -72,28 +71,11 @@ export const Filters = ({
             : undefined
         }}
         options={[
-          { value: '', label: 'Todos los asignados' },
-          ...assignees.map((assignee) => ({ value: assignee, label: assignee })),
+          { value: '', label: 'Todo el equipo' },
+          ...assignees.map((assignee) => ({ value: assignee.toUpperCase(), label: assignee.toUpperCase() })),
         ]}
       />
 
-      <Button
-        variant="outlined"
-        onClick={() => onFilterChange('assignee', 'Equipo-Desarrollo')}
-        sx={{ 
-          height: 40,
-          borderColor: isTeamDevelopmentActive ? '#8a2be2' : '#000',
-          borderWidth: 1,
-          fontSize: 12,
-          color: isTeamDevelopmentActive ? '#8a2be2' : '#000000',
-          backgroundColor: isTeamDevelopmentActive ? '#f5f0ff': '#ffffff',
-          '&:hover': {
-            borderColor: isTeamDevelopmentActive ? '#8a2be2' : '#f5f0ff'
-          }
-        }}
-      >
-        Ver equipo de desarrollo
-      </Button>
 
       </FiltersContents>
       <Button

@@ -1,13 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import styled from '@emotion/styled';
-import InfiniteScroll from "react-infinite-scroll-component";
-import CircularProgress from '@mui/material/CircularProgress';
 import { useIssues } from '../hooks/useIssues';
 import { KanbanColumn } from '../components/KanbanColumn/KanbanColumn';
 import { Filters } from '../components/Filters/Filters';
-import { useUsers } from '../hooks/useUsers';
 import { useProjects } from '../hooks/useProjects';
 import type { JiraIssue } from '../types/jira';
+import { TEAM_DEVELOPMENT } from '../constants/team';
+import GanttTimeline from '../components/Timeline/GanttTimeline';
 
 const DashboardContainer = styled.div`
   padding: 20px;
@@ -26,20 +25,13 @@ const ColumnsContainer = styled.div`
   padding: 16px 0;
   flex: 1;
   overflow: 'auto';
+  flex-wrap: wrap;
+  justify-content: center;
   @media (max-width: 768px) {
     flex-direction: column;
   }
 `;
 
-const LoadingMessage = styled.div`
-  text-align: center;
-  font-size: 1.2rem;
-  color: #5e6c84;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
 
 const ErrorMessage = styled.div`
   text-align: center;
@@ -63,10 +55,10 @@ export const Dashboard = () => {
     pagination,
     goToPage
   } = useIssues();
-  const [page, setPage] = useState(1);
-  const { users, loading: usersLoading } = useUsers();
   const { projects, loading: projectLoading } = useProjects();
-
+  useEffect(()=>{
+    console.log("paginacion",pagination)
+  },[issues])
   
   const allProjects = useMemo(() => {
     if (projectLoading) return [];
@@ -74,11 +66,7 @@ export const Dashboard = () => {
     return [...projectNames].sort((a, b) => a.localeCompare(b));
   }, [projects, projectLoading]);
 
-  const assignees = useMemo(() => {
-    if (usersLoading) return [];
-    const userNames = users.map(user => user.name);
-    return ['Equipo-Desarrollo', ...userNames].sort((a, b) => a.localeCompare(b));
-  }, [users, usersLoading]);
+  const assignees = TEAM_DEVELOPMENT.sort((a, b) => a.localeCompare(b));
 
   const sortByDueDate = (a: JiraIssue, b: JiraIssue) => {
     if (!a.duedate) return 1;
@@ -94,7 +82,7 @@ export const Dashboard = () => {
 
   const inProgressIssues = useMemo(() =>
     issues.filter(i =>
-        i.statusCategory === 'En curso' && i.status !== 'Esperando aprobación'
+        i.statusCategory === 'En curso' && i.status!== 'Esperando aprobación' && i.status!== 'Detenido'
     ).sort(sortByDueDate),
     [issues]
   );
@@ -102,6 +90,12 @@ export const Dashboard = () => {
   const doneIssues = useMemo(() =>
     issues.filter(i =>
       i.statusCategory === 'En curso' && i.status === 'Esperando aprobación'
+    ).sort(sortByDueDate),
+    [issues]
+  );
+
+  const cancelIssues = useMemo(() =>
+    issues.filter(i => i.status === 'Detenido'
     ).sort(sortByDueDate),
     [issues]
   );
@@ -119,6 +113,10 @@ export const Dashboard = () => {
   const totalDoneHours = useMemo(() => 
     doneIssues.reduce((sum, issue) => sum + (Number(issue.storyPoints) || 0), 0), 
     [doneIssues]
+  );
+  const totalCancelHours = useMemo(() => 
+    cancelIssues.reduce((sum, issue) => sum + (Number(issue.storyPoints) || 0), 0), 
+    [cancelIssues]
   );
 
   const loadMoreIssues = () => {
@@ -189,7 +187,22 @@ export const Dashboard = () => {
             hasMoreItems={!pagination.isLast}
             isLoading={loading}
           />
+          <KanbanColumn 
+            title="Detenido" 
+            issues={cancelIssues} 
+            onFilterChange={updateFilter}
+            totalHours={totalCancelHours}
+            titleColor="#362D4C"
+            borderColor="#ef496f"
+            bgColor="#f1c5c7"
+            lightBgColor="#F6F6FA"
+            onLoadMore={loadMoreIssues}
+            hasMoreItems={!pagination.isLast}
+            isLoading={loading}
+          />
         </ColumnsContainer>
+
+        <GanttTimeline issues={inProgressIssues} assignees={assignees} />
 
       </DashboardContainer>
     </>

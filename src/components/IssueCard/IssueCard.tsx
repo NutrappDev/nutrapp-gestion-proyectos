@@ -25,7 +25,7 @@ const Card = styled.div`
 `;
 
 const AvatarImage = styled.img`
-  width: 36px;
+  min-width: 36px;
   height: 36px;
   border-radius: 50%;
   object-fit: cover;
@@ -35,7 +35,7 @@ const AvatarImage = styled.img`
 `;
 
 const AvatarFallback = styled.div<{ color: string }>`
-  width: 36px;
+  min-width: 36px;
   height: 36px;
   border-radius: 50%;
   background-color: ${props => props.color};
@@ -122,7 +122,6 @@ export const IssueCard = ({ issue, updateAssigneeFilter }: IssueCardProps) => {
   
 
   const handleAssigneeClick = () => {
-    console.log(issue.assignee)
     if (issue.assignee?.name) {
       updateAssigneeFilter('assignee', issue.assignee.name);
     }
