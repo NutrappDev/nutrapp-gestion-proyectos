@@ -19,6 +19,7 @@ export interface JiraIssue {
   assignee: JiraAssignee | null;
   priority: string;
   updated: string;
+  created: string;
   storyPoints?: number;
   project: string;
   duedate: string;
