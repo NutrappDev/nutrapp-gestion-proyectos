@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosError } from 'axios';
 import type { JiraUsers, JiraIssue, JiraProject } from '../types/jira';
 
 
-const API_BASE_URL: string = 'https://nutrapp-gestion-proyectos-backend.onrender.com/api';
+const API_BASE_URL: string = import.meta.env.VITE_JIRA_API_BASE_URL;
 
 const jiraApiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

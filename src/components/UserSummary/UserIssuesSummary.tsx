@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 
 const SummaryContainer = styled(Box)`
   display: flex;
-  width: fit-content;
+  width: 100%;
   flex-wrap: nowrap;
   justify-content: center;
   gap: 4px;
