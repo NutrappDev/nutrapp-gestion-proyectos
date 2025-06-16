@@ -43,10 +43,9 @@ const CustomSelectField: React.FC<CustomSelectFieldProps> = ({
                 backgroundColor: 'transparent',
               },
               '&::-webkit-scrollbar-thumb': {
-                backgroundColor: '#9E9E9E',
+                backgroundColor: '#3C2052',
                 borderRadius: '10px',
-                borderBlock: '8px solid white',
-                borderRight: '4px solid white'
+
               },
               '&::-webkit-scrollbar-track': {
                 backgroundColor: 'transparent',
@@ -55,7 +54,7 @@ const CustomSelectField: React.FC<CustomSelectFieldProps> = ({
                 fontSize: '0.875rem',
                 minHeight: 'auto',
                 paddingY: '6px',
-                borderRadius: '8px',
+                borderRadius: '24px',
                 margin: '4px 0',
                 '&:hover': {
                   backgroundColor: '#D3D2E3',
@@ -81,31 +80,35 @@ const CustomSelectField: React.FC<CustomSelectFieldProps> = ({
         },
       }}
       sx={{
-        minWidth: 200,
-        color: '#1C1236',
-        '& .MuiSelect-icon': { color: '#1C1236' },
+        minWidth: 125,
+        color: '#3C2052',
+        '& .MuiSelect-icon': { color: '#3C2052' },
         '& .MuiInputLabel-root': {
+          fontSize: '0.875rem',
           textAlign: 'start',
-          color: '#1C1236' 
+          color: '#3C2052' 
         },
         '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-          color: '#1C1236',
+          color: '#3C2052',
         },
         '& .MuiInputLabel-root.Mui-focused': {
-          border: 'none',
-          color: '#1C1236',
+          color: '#3C2052',
         },
         '& .MuiOutlinedInput-root': {
-          backgroundColor: "#e8e4f0",
-          borderRadius: 2,
+          backgroundColor: "#ffffff",
+          borderRadius: '24px',
+          borderWidth: '1px',
           '& fieldset': {
-            borderColor: 'transparent',
+            borderColor: '#3C2052',
+            borderWidth: '1px',
           },
           '&:hover fieldset': {
-            borderColor: 'transparent',
+            borderColor: '#3C2052',
+            borderWidth: '1px',
           },
           '&.Mui-focused fieldset': {
-            borderColor: 'transparent',
+            borderColor: '#3C2052',
+            borderWidth: '1px',
           },
         },
       }}
