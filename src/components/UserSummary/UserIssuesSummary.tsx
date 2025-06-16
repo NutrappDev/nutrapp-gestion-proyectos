@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { Box, Skeleton } from '@mui/material';
 import { useIssuesData } from '@hooks/useIssues';
-import { useFiltersContext } from '@/context/FiltersContext';
 import { getUserIssueCounts } from '@/utils/issueUtils';
 import { UserAvatarCard } from './UserAvatarCard';
 import styled from '@emotion/styled';
@@ -32,7 +31,7 @@ const SkeletonCardContainer = styled(Box)`
 `;
 
 export const UserIssuesSummary: React.FC = () => {
-  const { filters } = useFiltersContext();
+  // const { filters } = useFiltersContext();
 
   const {
     data,

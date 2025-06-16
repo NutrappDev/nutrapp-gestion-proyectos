@@ -125,7 +125,7 @@ export const drawGanttChart = ({
     .attr('y', d => yScale(d.id) || 0)
     .attr('width', chartWidth + margin.left) 
     .attr('height', yScale.bandwidth() + barPadding) 
-    .attr('fill', (d, i) => i % 2 === 0 ? CHART_CONSTANTS.rowEvenColor : CHART_CONSTANTS.rowOddColor);
+    .attr('fill', (_d, i) => i % 2 === 0 ? CHART_CONSTANTS.rowEvenColor : CHART_CONSTANTS.rowOddColor);
 
   // Líneas de la cuadrícula vertical
   g.append('g')
@@ -202,7 +202,7 @@ export const drawGanttChart = ({
     .attr('width', margin.left - 10)
     .attr('height', barHeight)
     .style('pointer-events', 'none')
-    .each(function (d, i) {
+    .each(function (d, _i) {
       const issue = d as ParsedJiraIssue;
       const div = d3.select(this).append('xhtml:div')
         .style('display', 'flex')
