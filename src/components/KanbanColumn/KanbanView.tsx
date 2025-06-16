@@ -25,7 +25,6 @@ export const KanbanView: React.FC = () => {
   const { updateFilter } = useFiltersContext();
 
   const allIssuesFlattened = useMemo(() => {
-    console.log('data', data);
     return data?.pages.flatMap(page => page.issues) || [];
   }, [data]);
 

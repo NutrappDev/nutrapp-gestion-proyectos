@@ -1,4 +1,4 @@
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 export type { FetchIssuesResponse } from '@/api/jiraApi';
 import { fetchIssues } from '@/api/jiraApi';
 import { useFiltersContext } from '@/context/FiltersContext';

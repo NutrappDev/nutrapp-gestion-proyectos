@@ -50,7 +50,7 @@ export const CustomTabs = styled(Tabs)({
   },
 });
 
-export const CustomTab = styled(Tab)<TabProps>(({ theme }) => ({
+export const CustomTab = styled(Tab)<TabProps>(({}) => ({
   textTransform: 'none',
   minHeight: '32px',
   color: 'rgba(0, 0, 0, 0.6)',
