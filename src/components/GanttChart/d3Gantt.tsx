@@ -1,13 +1,12 @@
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import * as d3 from 'd3';
 import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material';
-import type { JiraIssue, ParsedJiraIssue } from '../../types/jira';
+import type { ParsedJiraIssue } from '@/types/jira';
 import { getProjectColor, parseJiraIssuesForGantt } from './GanttChartUtils';
 import { drawGanttChart } from './GanttChartDrawing';
 import { CHART_CONSTANTS } from './GanttChartConstants';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import { useIssuesData } from '@/hooks/useIssues';
-import { useFiltersContext } from '@/context/FiltersContext'; 
 import { filterInProgressIssues } from '@/utils/issueFilters';
 
 const D3GanttChart: React.FC = () => {
@@ -23,11 +22,8 @@ const D3GanttChart: React.FC = () => {
     error,
   } = useIssuesData(status);
 
-  const { filters } = useFiltersContext(); 
-
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [chartWidth, setChartWidth] = useState(0); 
-  // Creamos una ref para el contenedor del SVG que observaremos
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
 
   const allIssuesFlattened = useMemo(() => {
@@ -60,14 +56,11 @@ const D3GanttChart: React.FC = () => {
 
   const visibleEndDate = d3.utcDay.offset(visibleStartDate, 7);
 
-  // 🎉 REEMPLAZO DEL useEffect DE REDIMENSIONAMIENTO DE VENTANA
-  // Ahora usamos ResizeObserver para observar el contenedor del gráfico.
   useEffect(() => {
     const container = chartContainerRef.current;
     if (!container) return;
 
     const resizeObserver = new ResizeObserver(entries => {
-      // Tomamos el primer entry (normalmente solo habrá uno)
       const { contentRect } = entries[0];
       if (contentRect.width > 0 && contentRect.width !== chartWidth) {
         setChartWidth(contentRect.width);
@@ -80,14 +73,11 @@ const D3GanttChart: React.FC = () => {
       resizeObserver.unobserve(container);
       resizeObserver.disconnect();
     };
-  }, [chartWidth]); // Dependencia en chartWidth para re-observar si chartWidth se resetea por alguna razón (poco probable)
+  }, [chartWidth]); 
 
 
-  // Efecto para DIBUJAR la gráfica
   useEffect(() => {
-    // Solo dibuja si tenemos un elemento SVG, un ancho válido y hay issues para dibujar.
     if (!svgRef.current || chartWidth === 0 || inProgressIssues.length === 0) {
-      // Si no hay issues y no estamos cargando, limpia el SVG
       if (!isLoading && !isFetchingNextPage && svgRef.current) {
         d3.select(svgRef.current).selectAll('*').remove();
       }

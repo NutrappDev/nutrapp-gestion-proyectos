@@ -5,15 +5,13 @@ import CustomSelectField from './CustomSelectField';
 
 const FiltersContainer = styled.div`
   display: flex;
-  padding: 10px 8px;
-  background: #FCF9FF;
-  border: 1px solid #11182724;
-  border-radius: 12px;
-  margin: 16px 0;
+  padding: 0.5rem;
+  border-radius: 24px;
+  margin-bottom: 10px;
   flex-wrap: wrap;
   align-items: flex-end;
-  justify-content: space-between;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  justify-content: end;
+  gap: 8px;
 `;
 
 const FiltersContents = styled.div`
@@ -45,7 +43,7 @@ export const Filters = ({
     <FiltersContainer>
       <FiltersContents>
         <CustomSelectField
-          label="Filtrar por proyecto"
+          label="Proyecto"
           value={currentFilters.project || ''}
           onChange={(e) => onFilterChange('project', e.target.value)}
           InputLabelProps={{
@@ -61,7 +59,7 @@ export const Filters = ({
         />
 
       <CustomSelectField
-        label="Filtrar por asignado"
+        label="Asignado"
         value={currentFilters.assignee?.toUpperCase() || ''}
         onChange={(e) => onFilterChange('assignee', e.target.value)}
         InputLabelProps={{
@@ -72,7 +70,7 @@ export const Filters = ({
         }}
         options={[
           { value: '', label: 'Todo el equipo' },
-          ...assignees.map((assignee) => ({ value: assignee.toUpperCase(), label: assignee.toUpperCase() })),
+          ...assignees.map((assignee) => ({ value: assignee.toUpperCase(), label: assignee })),
         ]}
       />
 
@@ -87,14 +85,14 @@ export const Filters = ({
           border: 'none',
           color: '#ffffff',
           fontSize: 12,
-          backgroundColor: `#362D4C`,
-          borderRadius: 2,
+          background: `linear-gradient(to left, #3C2052, #4a3873)`,
+          borderRadius: '24px',
           '&:hover': {
             borderColor: '#ffffff'
           }
         }}
       >
-        Limpiar filtros
+        Limpiar
         
       </Button>
     </FiltersContainer>

@@ -1,9 +1,10 @@
 import styled from "@emotion/styled";
 
 const SkeletonContainer = styled.div`
+  width: 100%;
   padding: 12px;
   margin-bottom: 8px;
-  background: #f0f0f0;
+  background: #fbf9ff;
   border-radius: 6px;
 `;
 

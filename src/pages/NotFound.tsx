@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../components/UI/Button';
+import { Button } from '@components/UI/Button';
 
 const Container = styled.div`
   display: flex;
@@ -15,7 +15,7 @@ const Container = styled.div`
 const Title = styled.h1`
   font-size: 2.5rem;
   margin-bottom: 20px;
-  color: #172b4d;
+  color: #3c2052;
 `;
 
 const Message = styled.p`

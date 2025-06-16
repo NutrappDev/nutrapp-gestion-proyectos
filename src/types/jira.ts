@@ -24,6 +24,7 @@ export interface JiraIssue {
   project: string;
   duedate: string;
   url: string;
+  lastComment?: JiraComment;
 }
 
 export type StatusCategory = 'Por hacer' | 'En curso' | 'Listo';
@@ -44,4 +45,41 @@ export interface JiraProject {
     accountId: string;
     displayName: string;
   } | null;
+}
+
+export interface ParsedJiraIssue {
+  id: string;
+  key: string;
+  summary: string;
+  status: string;
+  statusCategory: string;
+  assignee: JiraAssignee | null;
+  priority: string;
+  updated: Date;
+  created: Date;
+  storyPoints?: number;
+  project: string;
+  duedate: Date;
+  url: string;
+}
+
+export interface JiraComment {
+  type: 'doc';
+  version: 1;
+  content: JiraDocContent[];
+  author?: JiraAssignee | null;
+  created?: string;
+}
+
+export interface JiraDocAttrs {
+  id?: string;
+  text?: string;
+  accessLevel?: string;
+}
+
+export interface JiraDocContent {
+  type: string;
+  content?: JiraDocContent[];
+  text?: string;
+  attrs?: JiraDocAttrs;
 }

@@ -1,19 +1,23 @@
 import styled from '@emotion/styled';
 import { IssueCard } from '../IssueCard/IssueCard';
 import type { JiraIssue } from '../../types/jira';
-import useInfiniteScroll from '../../hooks/useInfiniteScroll';
-import {AccessTime} from '@mui/icons-material'
-import { IssueSkeleton } from '../IssueSkeleton';
+import { AccessTime } from '@mui/icons-material';
+import { IssueSkeleton } from '../UI/IssueSkeleton';
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 
 interface KanbanColumnProps {
   title: string;
   issues: JiraIssue[];
-  onFilterChange: (key: 'project' | 'assignee', value: string) => void;
+  onFilterChange: (key: 'project' | 'assignee', value: string | undefined) => void;
   titleColor: string;
   borderColor: string;
   bgColor: string;
   lightBgColor: string;
   totalHours?: number;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  loadMoreIssues: () => void;
+  isLoading: boolean;
 }
 
 const ColumnContainer = styled.div<{ 
@@ -25,52 +29,52 @@ const ColumnContainer = styled.div<{
   display: inline-grid;
   justify-content: center;
   text-align: start;
+  background-color: #aab6dd2e;
+  padding: 1rem 0.4rem;
+  border-radius: 24px;
 `;
 
 const ColumnContent = styled.div<{borderColor: string; lightBgColor: string;}>`
-  min-width: 320px;
-  width: 30vw;
+  min-width: 250px;
   min-height: 300px;
-  height: 60vh;
-  background: ${props => props.lightBgColor};
-  border-radius: 8px;
-  padding: 0 12px;
-  padding-right: 3.5rem;
-  margin: 0 8px;
-  border: 2px solid ${props => props.borderColor};
-  box-shadow: -5px 5px 4px #e2e2e2, 5px -5px 4px rgb(255 255 255);
+  height: 80vh;
+  border-radius: 12px;
+  padding: 0 0.5rem;
   position: relative;
   overflow: hidden;
 `;
 
-const ColumnHeaderWrapper = styled.div`
+const ColumnHeaderWrapper = styled.div<{ bgColor: string }>`
   position: relative;
-  display: inline-block;
+  display: flex;
   margin: 0 0 12px 12px;
+  padding: 5px 16px;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 24px;
+  background-color: ${props => props.bgColor};
+  gap: 8px;
 `;
 
-const ColumnHeader = styled.h2<{ titleColor: string, bgColor: string }>`
+const ColumnHeader = styled.h2<{ titleColor: string }>`
   font-size: 0.9rem;
   font-weight: 600;
   text-transform: uppercase;
   color: ${props => props.titleColor};
   margin: 0;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background-color: ${props => props.bgColor};
   display: inline-block;
-  padding-right: 32px; // Espacio para la burbuja
+  text-align: center;
 `;
 
 const CountBadge = styled.span<{ bgColor: string }>`
-  position: absolute;
   top: 8px;
   right: 8px;
-  background-color: ${props => props.bgColor};
-  color: white;
+  background-color: #ffffff;
+  color: #3c2052;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  min-width: 30px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -88,6 +92,7 @@ const IssuesList = styled.div`
   padding: 12px 0;
   overflow-y: auto;
   scrollbar-width: none;
+  align-items: center;
   -ms-overflow-style: none;
   &::-webkit-scrollbar {
     display: none;
@@ -106,22 +111,20 @@ const HoursBadge = styled.span<{ titleColor: string }>`
 
 export const KanbanColumn = ({ 
   title, 
-  issues, 
+  issues,
   onFilterChange, 
   titleColor,
   borderColor,
   bgColor,
   lightBgColor,
   totalHours = 0,
-  onLoadMore,
-  hasMoreItems,
-  isLoading
-}: KanbanColumnProps & {
-  onLoadMore: () => void;
-  hasMoreItems: boolean;
-  isLoading: boolean;
-}) => {
-  const sentinelRef = useInfiniteScroll(onLoadMore, isLoading, hasMoreItems);
+  hasNextPage,
+  isFetchingNextPage,
+  loadMoreIssues,
+  isLoading,
+}: KanbanColumnProps) => {
+
+  const sentinelRef = useInfiniteScroll(loadMoreIssues, isFetchingNextPage || isLoading, hasNextPage);
 
   return (
     <ColumnContainer 
@@ -130,29 +133,34 @@ export const KanbanColumn = ({
       borderColor={borderColor}
       lightBgColor={lightBgColor}
     >
-      <ColumnHeaderWrapper>
-        <ColumnHeader titleColor={titleColor} bgColor={bgColor}>
-          {title} • <HoursBadge titleColor={titleColor}>{totalHours}<AccessTime fontSize="small"/></HoursBadge> 
+      <ColumnHeaderWrapper bgColor={bgColor}>
+        <CountBadge bgColor={borderColor}>
+          {issues.length}
+        </CountBadge>
+        <ColumnHeader titleColor={titleColor} >
+          {title}
         </ColumnHeader>
+        <HoursBadge titleColor={titleColor}>{totalHours}<AccessTime fontSize="small"/></HoursBadge> 
       </ColumnHeaderWrapper>
       <ColumnContent borderColor={borderColor} lightBgColor={lightBgColor} >
-        <CountBadge bgColor={borderColor}>
-            {issues.length}
-          </CountBadge>
         <IssuesList>
           {issues.map(issue => (
-            <IssueCard key={issue.id} issue={issue} updateAssigneeFilter={onFilterChange}/>
+            <IssueCard key={`${issue.id} ${issue.key}`} issue={issue} updateAssigneeFilter={onFilterChange}/>
           ))}
-        {isLoading && (
+          
+          {(isLoading || hasNextPage) && 
             <>
               <IssueSkeleton />
               <IssueSkeleton />
               <IssueSkeleton />
+              <IssueSkeleton />
             </>
-        )}
-        {hasMoreItems && (
+          }
+
+          {hasNextPage && (
             <div ref={sentinelRef} style={{ height: '1px' }} />
           )}
+
         </IssuesList>
       </ColumnContent>
     </ColumnContainer>
