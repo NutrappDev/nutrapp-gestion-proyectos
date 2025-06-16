@@ -4,9 +4,6 @@ import type { ButtonProps as MuiButtonProps } from '@mui/material';
 
 interface ButtonProps extends MuiButtonProps {
   children: React.ReactNode;
-  /**
-   * Si es true, muestra un indicador de carga
-   */
   loading?: boolean;
 }
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { fetchUsers } from '../api/jiraApi';
-import type { JiraUsers } from '../types/jira';
+import { fetchUsers } from '@/api/jiraApi';
+import type { JiraUsers } from '@/types/jira';
 
 export const useUsers = () => {
   const [users, setUsers] = useState<JiraUsers[]>([]);

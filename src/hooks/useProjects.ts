@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { fetchProjects } from '../api/jiraApi';
-import type { JiraProject } from '../types/jira';
+import { fetchProjects } from '@/api/jiraApi';
+import type { JiraProject } from '@/types/jira';
 
 export const useProjects = () => {
   const [projects, setProjects] = useState<JiraProject[]>([]);
