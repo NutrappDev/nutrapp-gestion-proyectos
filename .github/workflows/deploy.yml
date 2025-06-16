@@ -1,0 +1,46 @@
+name: Deploy Vite App to GitHub Pages
+
+on:
+  push:
+    branches:
+      - develop 
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write 
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Vite project
+        run: npm run build
+        env:
+          VITE_JIRA_API_BASE_URL: ${{ vars.VITE_JIRA_API_BASE_URL }}
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 
