@@ -1,18 +1,25 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Dashboard } from './pages/Dashboard';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Dashboard } from './pages/Dashboard/Dashboard';
+import { FiltersProvider } from './context/FiltersContext';
 import { NotFound } from './pages/NotFound';
-import './assets/styles/global.scss';
-import './App.css'
+import './styles/global.scss';
+import './styles/App.css'
 
 function App() {
+  const queryClient = new QueryClient();
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <FiltersProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </FiltersProvider>
+    </QueryClientProvider>
   )
 }
 
