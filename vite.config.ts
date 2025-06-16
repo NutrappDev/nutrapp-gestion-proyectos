@@ -19,5 +19,5 @@ export default defineConfig({
       '@types': resolve(__dirname, 'src/types')
     }
   },
-  base: 'https://nutrappdev.github.io/nutrapp-gestion-proyectos/',
+  base: '/nutrapp-gestion-proyectos/',
 })
