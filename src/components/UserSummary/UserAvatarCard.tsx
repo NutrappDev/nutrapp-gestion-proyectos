@@ -17,10 +17,12 @@ const CardContainer = styled(Box)`
   margin: 8px;
   padding: 8px;
   border-radius: 16px;
-  width: 100px;
+  width: 8.5rem;
   flex-shrink: 0;
   background-color: #fbf8ff;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(309deg, #ffffff, #f6f3fa99);
+  border: 1px solid #eae9eba1;
+  box-shadow: 0px 4px 12px rgb(150 141 161 / 22%), -4px -4px 4px #ffff;;
   transition: box-shadow transform 0.2s ease-in-out;
   &:hover {
     transform: translateY(-1px); 
@@ -29,8 +31,8 @@ const CardContainer = styled(Box)`
 `;
 
 const FlipContainer = styled(Box)`
-  width: 38px;
-  height: 38px;
+  width: 2.7rem;
+  height: 2.7rem;
   margin-bottom: 8px;
   position: relative;
   perspective: 1000px;
