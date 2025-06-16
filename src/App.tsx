@@ -12,7 +12,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <FiltersProvider>
-        <BrowserRouter>
+        <BrowserRouter basename="/nutrapp-gestion-proyectos">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="*" element={<NotFound />} />
