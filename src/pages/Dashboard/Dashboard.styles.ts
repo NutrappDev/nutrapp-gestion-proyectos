@@ -38,8 +38,8 @@ export const ErrorMessage = styled.div`
 `;
 
 export const ImageContainer = styled.div`
-  width: 6rem;
-  height: 6rem;
+  width: 5rem;
+  height: 5rem;
 `;
 
 export const CustomTabs = styled(Tabs)({

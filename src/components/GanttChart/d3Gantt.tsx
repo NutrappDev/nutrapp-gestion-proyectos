@@ -38,7 +38,7 @@ const D3GanttChart: React.FC = () => {
     }
   }, [hasNextPage, isFetchingNextPage, isLoading, fetchNextPage]);
 
-  const sentinelRef = useInfiniteScroll(loadMoreIssues, isFetchingNextPage || isLoading, !hasNextPage);
+  const sentinelRef = useInfiniteScroll(loadMoreIssues, isFetchingNextPage || isLoading, hasNextPage);
 
   const today = useMemo(() => d3.utcDay.floor(new Date()), []); 
 
@@ -211,9 +211,8 @@ const D3GanttChart: React.FC = () => {
         </div>
       </div>
 
-      {/* 🎉 ASIGNAR LA REF AL CONTENEDOR DEL SVG */}
       <div 
-        ref={chartContainerRef} // Aquí asignamos la nueva ref
+        ref={chartContainerRef}
         style={{ 
           width: '98%', 
           overflowX: 'hidden', 
@@ -260,7 +259,7 @@ const D3GanttChart: React.FC = () => {
           <>
             <svg ref={svgRef} width={chartWidth} height={calculatedSvgHeight}> 
             </svg>
-            {isFetchingNextPage && (
+            {(isLoading || hasNextPage) && (
                 <div style={{
                     display: 'flex', 
                     justifyContent: 'center',

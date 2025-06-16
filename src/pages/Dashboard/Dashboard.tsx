@@ -17,9 +17,10 @@ import {
 } from './Dashboard.styles';
 
 import { KanbanView } from '@/components/KanbanColumn/KanbanView';
+import { UserIssuesSummary } from '@/components/UserSummary/UserIssuesSummary';
 
 export const Dashboard = () => {
-  const { filters, updateFilter, resetFilters, pageSize, setPageSize } = useFiltersContext();
+  const { filters, updateFilter, resetFilters } = useFiltersContext();
   const { projects, loading: projectLoading } = useProjects();
   const { activeTab, handleTabChange } = useDashboardTabs();
 
@@ -42,6 +43,7 @@ export const Dashboard = () => {
           />
         </ImageContainer>
       </div>
+      <UserIssuesSummary />
 
       <Box sx={{ 
         borderBottom: 1, 
