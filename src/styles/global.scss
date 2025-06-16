@@ -27,6 +27,7 @@ body {
       #ffffff,
       #E6E2EF
     );
+  background: #ffffff;
   background-attachment: fixed;
   background-size: cover;
 }
@@ -36,6 +37,7 @@ body {
   min-width: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 // Accesibilidad
@@ -51,6 +53,14 @@ body {
   border-width: 0;
 }
 
+button:focus, button:focus-visible{
+  outline: none;
+}
+
+.react-calendar-timeline .rct-dateHeader-primary{
+  color: #201d24;
+}
+
 // Scroll personalizado
 ::-webkit-scrollbar {
   width: 10px;
@@ -62,17 +72,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    to bottom,
-    #c8b6ff,
-    #e1dcee
-  );
+  background: #3c2052;
   border-radius: 10px;
   border: 2px solid white;
   background-size: 100% 100%;
   background-position: top;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #c5c1d4;
-}
