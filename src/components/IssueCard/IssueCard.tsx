@@ -20,10 +20,10 @@ import {
   CommentHeader,
   CommentContent
 } from './IssueCard.styles';
+import { useFiltersContext } from '@/context/FiltersContext';
 
 interface IssueCardProps {
   issue: JiraIssue;
-  updateAssigneeFilter: (key: 'project' | 'assignee', value: string) => void;
   activeAssignee?: string;
 }
 
@@ -36,7 +36,8 @@ const stringToColor = (str: string) => {
   return `hsl(${hue}, 70%, 60%)`;
 };
 
-export const IssueCard = ({ issue, updateAssigneeFilter }: IssueCardProps) => {
+export const IssueCard = ({ issue }: IssueCardProps) => {
+  const { updateFilter: updateAssigneeFilter } = useFiltersContext();
   const [showComment, setShowComment] = useState(false);
   const initials = issue.assignee?.initials || 'NA';
   const bgColor = stringToColor(initials);

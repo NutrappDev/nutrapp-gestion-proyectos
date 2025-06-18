@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Avatar, Typography, Box, Tooltip } from '@mui/material';
 import styled from '@emotion/styled';
 import { UserIssueCountsByCategory } from '@/utils/issueUtils';
+import { useFiltersContext } from '@/context/FiltersContext';
 
 interface UserAvatarCardProps {
   name: string;
@@ -36,6 +37,7 @@ const FlipContainer = styled(Box)`
   margin-bottom: 8px;
   position: relative;
   perspective: 1000px;
+  cursor: pointer;
 `;
 
 const FlipCardInner = styled(Box)<{ $isFlipped: boolean }>`
@@ -103,12 +105,18 @@ const CountsRow = styled(Box)`
 `;
 
 export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({ name, avatarUrl, initials, counts }) => {
+  const { updateFilter: updateAssigneeFilter } = useFiltersContext();
   const [isFlipped, setIsFlipped] = useState(false);
 
   const colors = {
     backlog: '#3f3ead',
     inProgress: '#fab744',
     detained: '#ff3a55e6',
+  };
+  const handleAssigneeClick = () => {
+    if (name) {
+      updateAssigneeFilter('assignee', name);
+    }
   };
 
   return (
@@ -124,6 +132,7 @@ export const UserAvatarCard: React.FC<UserAvatarCardProps> = ({ name, avatarUrl,
       </Typography>
       <Tooltip title={name} arrow placement="top">
         <FlipContainer
+          onClick={handleAssigneeClick}
           onMouseEnter={() => setIsFlipped(true)}
           onMouseLeave={() => setIsFlipped(false)}
         >

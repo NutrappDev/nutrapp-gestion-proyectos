@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import Box from '@mui/material/Box';
 import { Timeline, ViewKanban } from '@mui/icons-material';
-import { useFiltersContext } from '@/context/FiltersContext'; 
 import { useProjects } from '@hooks/useProjects';
 import { useDashboardTabs } from '@hooks/useDashboardTabs';
 import { Filters } from '@components/Filters/Filters';
@@ -20,7 +19,6 @@ import { KanbanView } from '@/components/KanbanColumn/KanbanView';
 import { UserIssuesSummary } from '@/components/UserSummary/UserIssuesSummary';
 
 export const Dashboard = () => {
-  const { filters, updateFilter, resetFilters } = useFiltersContext();
   const { projects, loading: projectLoading } = useProjects();
   const { activeTab, handleTabChange } = useDashboardTabs();
 
@@ -72,9 +70,6 @@ export const Dashboard = () => {
         <Filters
           projects={allProjects}
           assignees={assignees}
-          currentFilters={filters}
-          onFilterChange={updateFilter}
-          onReset={resetFilters}
         />
       </Box>
 

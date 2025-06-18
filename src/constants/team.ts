@@ -4,6 +4,6 @@ export const TEAM_DEVELOPMENT = [
   'kevin aguilera',
   'richard medina', 
   'isabel Gomez', 
-  'maria alejandra pedraza cardenas', 
+  'maría alejandra pedraza cárdenas', 
   'david sarmiento'
 ];

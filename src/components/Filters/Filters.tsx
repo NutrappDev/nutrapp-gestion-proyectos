@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { Button } from '@mui/material';
 import { RestartAlt } from '@mui/icons-material';
 import CustomSelectField from './CustomSelectField';
+import { useFiltersContext } from '@/context/FiltersContext';
 
 const FiltersContainer = styled.div`
   display: flex;
@@ -22,21 +23,13 @@ const FiltersContents = styled.div`
 interface FiltersProps {
   projects: string[];
   assignees: string[];
-  currentFilters: {
-    project?: string;
-    assignee?: string;
-  };
-  onFilterChange: (key: 'project' | 'assignee', value: string) => void;
-  onReset: () => void;
 }
 
 export const Filters = ({ 
   projects = [], 
   assignees = [], 
-  currentFilters = {}, 
-  onFilterChange, 
-  onReset 
 }: FiltersProps) => {
+  const { filters: currentFilters, updateFilter, resetFilters } = useFiltersContext();
 
 
   return (
@@ -45,7 +38,7 @@ export const Filters = ({
         <CustomSelectField
           label="Proyecto"
           value={currentFilters.project || ''}
-          onChange={(e) => onFilterChange('project', e.target.value)}
+          onChange={(e) => updateFilter('project', e.target.value)}
           InputLabelProps={{
             shrink: false,
             style: currentFilters.project
@@ -61,7 +54,7 @@ export const Filters = ({
       <CustomSelectField
         label="Asignado"
         value={currentFilters.assignee?.toUpperCase() || ''}
-        onChange={(e) => onFilterChange('assignee', e.target.value)}
+        onChange={(e) => updateFilter('assignee', e.target.value)}
         InputLabelProps={{
           shrink: false,
           style: currentFilters.assignee
@@ -78,7 +71,7 @@ export const Filters = ({
       </FiltersContents>
       <Button
         variant="outlined"
-        onClick={onReset}
+        onClick={resetFilters}
         endIcon={<RestartAlt fontSize="small"/>}
         sx={{ 
           height: 40,

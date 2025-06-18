@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 import { useIssuesData } from '@hooks/useIssues';
-import { useFiltersContext } from '@/context/FiltersContext';
 import { KanbanColumn } from '@components/KanbanColumn/KanbanColumn';
 import {
   filterTodoIssues,
@@ -22,7 +21,6 @@ export const KanbanView: React.FC = () => {
     isLoading,
   } = useIssuesData();
 
-  const { updateFilter } = useFiltersContext();
 
   const allIssuesFlattened = useMemo(() => {
     return data?.pages.flatMap(page => page.issues) || [];
@@ -53,7 +51,6 @@ export const KanbanView: React.FC = () => {
       <KanbanColumn
         title="Backlog"
         issues={todoIssues}
-        onFilterChange={updateFilter}
         totalHours={totalTodoHours}
         titleColor="#ffffff"
         borderColor="#857C99"
@@ -67,7 +64,6 @@ export const KanbanView: React.FC = () => {
       <KanbanColumn
         title="En progreso"
         issues={inProgressIssues}
-        onFilterChange={updateFilter}
         totalHours={totalInProgressHours}
         titleColor="#ffffff"
         borderColor="#f6b46b"
@@ -81,7 +77,6 @@ export const KanbanView: React.FC = () => {
       <KanbanColumn
         title="Esperando Aprobacion"
         issues={awaitingApprovalIssues}
-        onFilterChange={updateFilter}
         totalHours={totalDoneHours}
         titleColor="#ffffff"
         borderColor="#65D9A9"
@@ -95,7 +90,6 @@ export const KanbanView: React.FC = () => {
       <KanbanColumn
         title="Detenido"
         issues={detainedIssues}
-        onFilterChange={updateFilter}
         totalHours={totalCancelHours}
         titleColor="#ffffff"
         borderColor="#ef496f"

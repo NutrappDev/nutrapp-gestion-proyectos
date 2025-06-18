@@ -32,6 +32,10 @@ const D3GanttChart: React.FC = () => {
 
   const inProgressIssues = useMemo(() => filterInProgressIssues(allIssuesFlattened), [allIssuesFlattened]);
 
+  useEffect(() => {
+    console.log('In-progress issues updated:', inProgressIssues);
+  }, [inProgressIssues]);
+
   const loadMoreIssues = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage && !isLoading) {
       fetchNextPage();

@@ -8,7 +8,6 @@ import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 interface KanbanColumnProps {
   title: string;
   issues: JiraIssue[];
-  onFilterChange: (key: 'project' | 'assignee', value: string | undefined) => void;
   titleColor: string;
   borderColor: string;
   bgColor: string;
@@ -112,7 +111,6 @@ const HoursBadge = styled.span<{ titleColor: string }>`
 export const KanbanColumn = ({ 
   title, 
   issues,
-  onFilterChange, 
   titleColor,
   borderColor,
   bgColor,
@@ -145,10 +143,10 @@ export const KanbanColumn = ({
       <ColumnContent borderColor={borderColor} lightBgColor={lightBgColor} >
         <IssuesList>
           {issues.map(issue => (
-            <IssueCard key={`${issue.id} ${issue.key}`} issue={issue} updateAssigneeFilter={onFilterChange}/>
+            <IssueCard key={`${issue.id} ${issue.key}`} issue={issue}/>
           ))}
           
-          {(isLoading || hasNextPage) && 
+          {(isLoading) && 
             <>
               <IssueSkeleton />
               <IssueSkeleton />
