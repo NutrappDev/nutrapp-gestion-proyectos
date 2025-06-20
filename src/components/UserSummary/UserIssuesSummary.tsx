@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react';
 import { Box, Skeleton } from '@mui/material';
 import { useIssuesData } from '@hooks/useIssues';
-import { getUserIssueCounts } from '@/utils/issueUtils';
-import { UserAvatarCard } from './UserAvatarCard';
+import { getUserIssueCounts, UserIssueSummary } from '@/utils/issueUtils';
+import { getTeamIssueCounts, TeamSummary } from '@/utils/teamIssueUtils';
+import { SummaryCard } from './summaryCard';
 import styled from '@emotion/styled';
+import { useFiltersContext } from '@/context/FiltersContext';
 
 const SummaryContainer = styled(Box)`
   display: flex;
@@ -11,8 +13,7 @@ const SummaryContainer = styled(Box)`
   flex-wrap: nowrap;
   justify-content: center;
   gap: 4px;
-  padding-bottom: 1rem;
-  margin: 0 1rem;
+  padding: 1rem 0;
   border-radius: 8px;
   overflow-x: auto;
 `;
@@ -23,15 +24,15 @@ const SkeletonCardContainer = styled(Box)`
   align-items: center;
   margin: 8px;
   padding: 8px;
-  border-radius: 22px;
-  width: 100px;
+  border-radius: 16px;
+  width: 8.5rem;
   flex-shrink: 0;
   background-color: #ffffff;
   box-shadow: 3px 3px 5px #ddd8e3, -3px -3px 5px #f3f0f7;
 `;
 
 export const UserIssuesSummary: React.FC = () => {
-  // const { filters } = useFiltersContext();
+  const { filters } = useFiltersContext();
 
   const {
     data,
@@ -42,9 +43,19 @@ export const UserIssuesSummary: React.FC = () => {
     return data?.pages.flatMap(page => page.issues) || [];
   }, [data]);
 
-  const userIssueCounts = useMemo(() => {
-    return getUserIssueCounts(allIssuesFlattened);
-  }, [allIssuesFlattened]);
+   const isShowingTeams = useMemo(() => {
+    // Mostrar por equipos si NO hay un teamId seleccionado Y NO hay un asignado individual seleccionado
+    return !filters.teamId && !filters.assignee;
+  }, [filters.teamId, filters.assignee]);
+
+  // Define el tipo de summaryData para que TypeScript entienda que puede ser TeamSummary[] o UserIssueSummary[]
+  const summaryData: (TeamSummary | UserIssueSummary)[] = useMemo(() => {
+    if (isShowingTeams) {
+      return getTeamIssueCounts(allIssuesFlattened);
+    } else {
+      return getUserIssueCounts(allIssuesFlattened);
+    }
+  }, [allIssuesFlattened, isShowingTeams]);
 
   const skeletonCount = 2;
 
@@ -53,9 +64,9 @@ export const UserIssuesSummary: React.FC = () => {
       <SummaryContainer>
         {Array.from(new Array(skeletonCount)).map((_, index) => (
           <SkeletonCardContainer key={index}>
-            <Skeleton variant="circular" width={40} height={40} sx={{ marginBottom: '8px' }} />
             <Skeleton variant="text" width="80%" height={20} sx={{ marginBottom: '4px' }} />
-            <Box display="flex" justifyContent="center" marginTop="8px">
+            <Skeleton variant="circular" width={'2.7rem'} height={'2.7rem'} sx={{ marginBottom: '8px' }} />
+            <Box display="flex" justifyContent="center" sx={{ marginBottom: '4px', padding:'0.3rem' }}>
               <Skeleton variant="circular" width={24} height={24} sx={{ margin: '2px' }} />
               <Skeleton variant="circular" width={24} height={24} sx={{ margin: '2px' }} />
               <Skeleton variant="circular" width={24} height={24} sx={{ margin: '2px' }} />
@@ -84,13 +95,13 @@ export const UserIssuesSummary: React.FC = () => {
 
   return (
     <SummaryContainer>
-      {userIssueCounts.map(user => (
-        <UserAvatarCard
-          key={user.name}
-          name={user.name}
-          avatarUrl={user.avatar}
-          initials={user.initials}
-          counts={user.counts}
+      {summaryData.map(item => (
+        <SummaryCard
+          key={'id' in item ? item.id : item.name} 
+          name={item.name}
+          avatarUrl={'avatar' in item ? item.avatar : undefined} 
+          initials={item.initials}
+          counts={item.counts}
         />
       ))}
     </SummaryContainer>

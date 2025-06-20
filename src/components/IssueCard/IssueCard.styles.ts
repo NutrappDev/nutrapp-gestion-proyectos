@@ -73,8 +73,8 @@ export const KeyContent = styled.h3`
   font-size: 0.85rem;
   font-weight: 500;
   margin: 4px 0;
-  color: #8da6f6;
-  background-color: #f3f5ff;
+  color: #8da0f6;
+  background-color: #f8edff;
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -2,17 +2,29 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 export type { FetchIssuesResponse } from '@/api/jiraApi';
 import { fetchIssues } from '@/api/jiraApi';
 import { useFiltersContext } from '@/context/FiltersContext';
-import { TEAM_DEVELOPMENT } from '@/constants/team';
+import { ALL_ASSIGNEES } from '@/constants/team';
 
 export const useIssuesData = (status?: string ) => {
-  const { filters, pageSize } = useFiltersContext();
+  const { filters, pageSize, getSelectedTeamMembers } = useFiltersContext();
 
-  return useInfiniteQuery({
+ return useInfiniteQuery({
     queryKey: ['issues', filters, status],
     queryFn: async ({ pageParam = 1 }) => {
+      let assigneesToSend: string | string[] | undefined;
+      if (filters.assignee) {
+        assigneesToSend = filters.assignee;
+      } else {
+        const teamMembers = getSelectedTeamMembers();
+        if (teamMembers) {
+          assigneesToSend = teamMembers;
+        } else {
+          assigneesToSend = ALL_ASSIGNEES;
+        }
+      }
+
       return fetchIssues({
         project: filters.project,
-        assignee: filters.assignee ?? TEAM_DEVELOPMENT,
+        assignee: assigneesToSend,
         status,
         page: pageParam,
         pageSize: pageSize

@@ -146,11 +146,16 @@ export const KanbanColumn = ({
             <IssueCard key={`${issue.id} ${issue.key}`} issue={issue}/>
           ))}
           
-          {(isLoading) && 
+          {(isLoading) && issues.length == 0 &&
             <>
               <IssueSkeleton />
               <IssueSkeleton />
               <IssueSkeleton />
+              <IssueSkeleton />
+            </>
+          }
+          {(isLoading || hasNextPage) && issues.length > 0 &&
+            <>
               <IssueSkeleton />
             </>
           }

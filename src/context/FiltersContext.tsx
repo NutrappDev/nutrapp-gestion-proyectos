@@ -1,8 +1,10 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { Team, TEAMS } from '@/constants/team';
 
 interface Filters {
   project?: string;
   assignee?: string;
+  teamId?: string;
 }
 
 interface FiltersContextType {
@@ -11,6 +13,8 @@ interface FiltersContextType {
   resetFilters: () => void;
   pageSize: number;
   setPageSize: (size: number) => void;
+  getSelectedTeamMembers: () => string[] | undefined;
+  getSelectedTeamName: () => string | undefined;
 }
 
 const FiltersContext = createContext<FiltersContextType | undefined>(undefined);
@@ -34,13 +38,27 @@ export const FiltersProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setPageSizeState(size);
   }, []);
 
+  const getSelectedTeamMembers = useCallback(() => {
+    if (!filters.teamId) return undefined;
+    const selectedTeam = TEAMS.find(team => team.id === filters.teamId);
+    return selectedTeam?.members;
+  }, [filters.teamId]);
+
+  const getSelectedTeamName = useCallback(() => {
+    if (!filters.teamId) return undefined;
+    const selectedTeam = TEAMS.find(team => team.id === filters.teamId);
+    return selectedTeam?.name;
+  }, [filters.teamId]);
+
   const value = useMemo(() => ({
     filters,
     updateFilter,
     resetFilters,
     pageSize,
     setPageSize,
-  }), [filters, updateFilter, resetFilters, pageSize]);
+    getSelectedTeamMembers,
+    getSelectedTeamName,
+  }), [filters, updateFilter, resetFilters, pageSize, getSelectedTeamMembers, getSelectedTeamName]);
 
   return <FiltersContext.Provider value={value}>{children}</FiltersContext.Provider>;
 };

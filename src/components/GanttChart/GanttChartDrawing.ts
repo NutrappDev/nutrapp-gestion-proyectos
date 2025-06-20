@@ -79,7 +79,7 @@ export const drawGanttChart = ({
           .tickFormat((d: d3.AxisDomain) => d3.utcFormat('%b %d')(d as Date)) as d3.Axis<Date>);
 
       g.selectAll<SVGRectElement, ParsedJiraIssue>('.gantt-bar')
-        .attr('x', d => newXScale(d.created))
+        .attr('x', d => newXScale(d.created.setHours(0,0,0,0)))
         .attr('width', d => {
           const start = d.created;
           const end = d.duedate || d.updated;
@@ -166,7 +166,7 @@ export const drawGanttChart = ({
     .enter()
     .append('rect')
     .attr('class', 'gantt-bar')
-    .attr('x', d => xScale(d.created))
+    .attr('x', d => xScale(d.created.setHours(0,0,0,0))) // Asegura que la barra comience al día siguiente
     .attr('y', d => (yScale(d.id) || 0) + (yScale.bandwidth() - barHeight) / 2)
     .attr('width', d => {
       const start = d.created;
@@ -230,7 +230,7 @@ export const drawGanttChart = ({
           .style('object-fit', 'cover')
           .style('margin-right', '8px')
           .on('error', function () {
-            d3.select(this).attr('src', 'https://via.placeholder.com/28x28.png?text=NA');
+            d3.select(this).attr('src', 'https://picsum.photos/28/28');
           });
       }
 

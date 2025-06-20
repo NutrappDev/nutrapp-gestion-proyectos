@@ -5,14 +5,15 @@ import { useProjects } from '@hooks/useProjects';
 import { useDashboardTabs } from '@hooks/useDashboardTabs';
 import { Filters } from '@components/Filters/Filters';
 import { TabPanel, a11yProps } from '@components/UI/TabPanel';
-import { TEAM_DEVELOPMENT } from '@constants/team';
-import logo from '@assets/imgs/teamdev.png';
+import { TEAM_DEVELOPMENT_MEMBERS, TEAM_OPERATIONS_MEMBERS } from '@constants/team';
+import { useFiltersContext } from '@/context/FiltersContext';
 import D3GanttChart from '@components/GanttChart/d3Gantt';
 import {
   DashboardContainer,
-  ImageContainer,
+  AnimatedTitle,
   CustomTabs,
   CustomTab,
+  AnimatedContent
 } from './Dashboard.styles';
 
 import { KanbanView } from '@/components/KanbanColumn/KanbanView';
@@ -21,6 +22,7 @@ import { UserIssuesSummary } from '@/components/UserSummary/UserIssuesSummary';
 export const Dashboard = () => {
   const { projects, loading: projectLoading } = useProjects();
   const { activeTab, handleTabChange } = useDashboardTabs();
+  const { getSelectedTeamName } = useFiltersContext();
 
   const allProjects = useMemo(() => {
     if (projectLoading) return [];
@@ -28,19 +30,22 @@ export const Dashboard = () => {
     return [...projectNames].sort((a, b) => a.localeCompare(b));
   }, [projects, projectLoading]);
 
-  const assignees = TEAM_DEVELOPMENT.sort((a, b) => a.localeCompare(b));
+  const assignees = [...TEAM_DEVELOPMENT_MEMBERS,...TEAM_OPERATIONS_MEMBERS].sort((a, b) => a.localeCompare(b));
+
+  const dashboardTitle = useMemo(() => {
+    const selectedTeamName = getSelectedTeamName();
+    return selectedTeamName ? selectedTeamName: 'NUTRAPP';
+  }, [ getSelectedTeamName]);
 
   return (
     <DashboardContainer>
-      <div className="flex items-center justify-center px-4 py-2">
-        <ImageContainer>
-          <img
-            src={logo}
-            alt="Logo TeamBoard"
-            className="w-full h-full object-contain"
-          />
-        </ImageContainer>
-      </div>
+      <AnimatedContent key={dashboardTitle}>
+        <div className="flex items-center justify-center px-4 py-4 my-12">
+          <AnimatedTitle>
+            {dashboardTitle}
+          </AnimatedTitle>
+        </div>
+      </AnimatedContent>
       <UserIssuesSummary />
 
       <Box sx={{ 

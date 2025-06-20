@@ -3,6 +3,8 @@ import { Button } from '@mui/material';
 import { RestartAlt } from '@mui/icons-material';
 import CustomSelectField from './CustomSelectField';
 import { useFiltersContext } from '@/context/FiltersContext';
+import { TEAMS, ALL_ASSIGNEES } from '@/constants/team'; 
+import { useMemo } from 'react';
 
 const FiltersContainer = styled.div`
   display: flex;
@@ -26,15 +28,40 @@ interface FiltersProps {
 }
 
 export const Filters = ({ 
-  projects = [], 
-  assignees = [], 
+  projects = []
 }: FiltersProps) => {
-  const { filters: currentFilters, updateFilter, resetFilters } = useFiltersContext();
-
+  const { filters: currentFilters, updateFilter, resetFilters, getSelectedTeamMembers } = useFiltersContext();
+  
+  const assigneeOptions = useMemo(() => {
+    const selectedTeamMembers = getSelectedTeamMembers();
+    if (selectedTeamMembers) {
+      return selectedTeamMembers.sort().map((assignee) => ({ value: assignee.toUpperCase(), label: assignee }));
+    } else {
+      return ALL_ASSIGNEES.map((assignee) => ({ value: assignee.toUpperCase(), label: assignee }));
+    }
+  }, [currentFilters.teamId, getSelectedTeamMembers]);
 
   return (
     <FiltersContainer>
       <FiltersContents>
+        <CustomSelectField
+          label="Equipo"
+          value={currentFilters.teamId || ''}
+          onChange={(e) => {
+            updateFilter('teamId', e.target.value);
+            updateFilter('assignee', undefined); 
+          }}
+          InputLabelProps={{
+            shrink: false,
+            style: currentFilters.teamId
+              ? { display: 'none' }
+              : undefined
+          }}
+          options={[
+            { value: '', label: 'Todos los equipos' },
+            ...TEAMS.map((team) => ({ value: team.id, label: team.label })),
+          ]}
+        />
         <CustomSelectField
           label="Proyecto"
           value={currentFilters.project || ''}
@@ -54,7 +81,11 @@ export const Filters = ({
       <CustomSelectField
         label="Asignado"
         value={currentFilters.assignee?.toUpperCase() || ''}
-        onChange={(e) => updateFilter('assignee', e.target.value)}
+        onChange={(e) => {
+          updateFilter('assignee', e.target.value)
+          // const team = findTeamByAssignee(e.target.value || '');
+          // updateFilter('teamId', team ? team.id : undefined);
+        }}
         InputLabelProps={{
           shrink: false,
           style: currentFilters.assignee
@@ -62,11 +93,10 @@ export const Filters = ({
             : undefined
         }}
         options={[
-          { value: '', label: 'Todo el equipo' },
-          ...assignees.map((assignee) => ({ value: assignee.toUpperCase(), label: assignee })),
+          { value: '', label: 'Todos los asignados' },
+          ...assigneeOptions,
         ]}
       />
-
 
       </FiltersContents>
       <Button

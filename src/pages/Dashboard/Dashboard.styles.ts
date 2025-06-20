@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { keyframes } from '@emotion/react';
 import type { TabProps } from '@mui/material/Tab';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -10,6 +11,43 @@ export const DashboardContainer = styled.div`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+`;
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+export const AnimatedContent = styled.div`
+  animation: ${fadeIn} 0.8s ease;
+`;
+
+const typing = keyframes`
+  from { width: 0 }
+  to { width: 100% }
+`;
+
+const blink = keyframes`
+  0%, 100% { border-color: transparent }
+  50% { border-color: #6a408c }
+`;
+export const AnimatedTitle = styled.h1`
+  font-weight: bold;
+  background: linear-gradient(to right, #3c2052, #6a408c);
+  -webkit-background-clip: text;
+  color: transparent;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 0;
+  animation: 
+    ${typing} 2.5s steps(30, end) forwards,
+    ${blink} 1s step-end forwards;
 `;
 
 export const ColumnsContainer = styled.div`
