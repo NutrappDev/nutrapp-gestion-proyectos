@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
-import { Team, TEAMS } from '@/constants/team';
+import { TEAMS } from '@/constants/team';
 
 interface Filters {
   project?: string;
