@@ -27,9 +27,10 @@ export const TEAM_OPERATIONS_MEMBERS = [
   'Miller Ladino Osorio',
   'Juan Medina',
   'Evelyn Herreño',
-  'Jefferson Alvarado Martinez', 
+  'Yefer Enrique García Moncada', 
   'Michelle Carolina Castro Muñoz',
-  'David Alberto Espitia Quiceno'
+  'David Alberto Espitia Quiceno',
+  'Dannerys Gomez Polanco'
 ];
 
 export const TEAMS: Team[] = [
