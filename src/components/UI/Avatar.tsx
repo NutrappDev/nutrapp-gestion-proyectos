@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { Box, rem } from '@mantine/core';
 
 interface AvatarProps {
   initials: string;
@@ -7,30 +7,28 @@ interface AvatarProps {
   color?: string;
 }
 
-const AvatarContainer = styled.div<{ size: number; color: string }>`
-  width: ${({ size }) => size}px;
-  height: ${({ size }) => size}px;
-  border-radius: 50%;
-  background-color: ${({ color }) => color};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  font-size: ${({ size }) => size * 0.4}px;
-  background-size: cover;
-  background-position: center;
-`;
 
 export const Avatar = ({ initials, imageUrl, size = 32, color = '#4e4e4e' }: AvatarProps) => {
   return (
-    <AvatarContainer
-      size={size}
-      color={color}
-      style={{ backgroundImage: imageUrl ? `url(${imageUrl})` : 'none' }}
+    <Box
+      style={{
+        width: rem(size),
+        height: rem(size),
+        borderRadius: '50%',
+        backgroundColor: color,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: rem(size * 0.4),
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundImage: imageUrl ? `url(${imageUrl})` : 'none',
+      }}
       aria-label={`Avatar de ${initials}`}
     >
       {!imageUrl && initials}
-    </AvatarContainer>
+    </Box>
   );
 };

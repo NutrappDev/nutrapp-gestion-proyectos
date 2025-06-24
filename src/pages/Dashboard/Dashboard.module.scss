@@ -1,0 +1,151 @@
+@use '../../styles/variables' as v;
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(v.spacing(xs));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    border-color: transparent;
+  }
+  50% {
+    border-color: #6a408c;
+  }
+}
+
+.dashboardContainer {
+  min-width: 100%;
+  max-width: 100vw;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.animatedContent {
+  animation: fadeIn 0.8s ease;
+}
+
+.animatedTitle {
+  font-size: v.font-size(xxl);
+  font-weight: v.font-weight(bold);
+  background: linear-gradient(to right, v.color(primary), v.color(secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: center;
+  width: 0;
+  animation:
+    typing 2.5s steps(30, end) forwards,
+    blink 1s step-end forwards;
+}
+
+.tabsRoot {
+  position: relative;
+}
+
+.tabsList {
+  padding: 0 1rem;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0px 2px 4px #cecdcf94;
+}
+
+.tab {
+  font-size: v.font-size(md);
+  font-weight: v.font-weight(semibold);
+  min-height: 4rem;
+  padding: 0 2rem;
+  transition: all 0.3s ease;
+  color: #99989e;
+  border-bottom: 2px solid transparent;
+
+  &[data-active] {
+    color: v.color(primary);
+    border-bottom-color: v.color(primary);
+    background-color: transparent;
+  }
+
+  &:not([data-active]){
+    color: #99989e;
+  }
+
+  &:hover:not([data-active]) {
+    color: v.color(dark);
+    background-color: rgba(v.color(primary), 0.05);
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  .tabIcon {
+    margin-right: 1rem;
+  }
+}
+
+.tabPanel {
+  animation: fadeIn 0.3s ease-out;
+}
+
+
+.columnsContainer {
+  display: flex;
+  gap: v.spacing(md);
+  overflow-x: auto;
+  flex: 1;
+  flex-wrap: nowrap;
+  overflow: auto;
+  padding: v.spacing(lg); 
+  padding-bottom: v.spacing(xl);
+
+  @include v.respond-to(md) {
+    flex-direction: column;
+  }
+}
+
+.errorMessage {
+  text-align: center;
+  padding: 40px;
+  font-size: v.font-size(lg);
+  color: v.color(error);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imageContainer {
+  width: 5rem;
+  height: 5rem;
+}
+
+.customTabs {
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+}
+
+.customTab {
+  text-transform: none;
+  min-height: 32px;
+  color: rgba(0, 0, 0, 0.6);
+}

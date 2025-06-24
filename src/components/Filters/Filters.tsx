@@ -1,123 +1,130 @@
-import styled from '@emotion/styled';
-import { Button } from '@mui/material';
-import { RestartAlt } from '@mui/icons-material';
+import { Button, Group } from '@mantine/core';
+import { IconRefresh } from '@tabler/icons-react';
 import CustomSelectField from './CustomSelectField';
 import { useFiltersContext } from '@/context/FiltersContext';
-import { TEAMS, ALL_ASSIGNEES } from '@/constants/team'; 
+import { TEAMS, findTeamByAssignee } from '@/constants/team';
 import { useMemo } from 'react';
-
-const FiltersContainer = styled.div`
-  display: flex;
-  padding: 0.5rem;
-  border-radius: 24px;
-  margin-bottom: 10px;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: end;
-  gap: 8px;
-`;
-
-const FiltersContents = styled.div`
-  display: flex;
-  gap: 16px;
-`;
 
 interface FiltersProps {
   projects: string[];
   assignees: string[];
 }
 
+interface GroupedSelectOption {
+  group: string;
+  items: Array<{ value: string; label: string }>;
+}
+
 export const Filters = ({ 
   projects = []
 }: FiltersProps) => {
-  const { filters: currentFilters, updateFilter, resetFilters, getSelectedTeamMembers } = useFiltersContext();
-  
+  const { filters: currentFilters, updateFilter, resetFilters, getSelectedTeamMembers, getSelectedTeamName } = useFiltersContext();
+
+  const formatAssigneeToItem = (assigneeName: string) => ({
+    value: assigneeName.toUpperCase(),
+    label: assigneeName,
+  });
+
   const assigneeOptions = useMemo(() => {
+    const options: GroupedSelectOption[] = [];
     const selectedTeamMembers = getSelectedTeamMembers();
-    if (selectedTeamMembers) {
-      return selectedTeamMembers.sort().map((assignee) => ({ value: assignee.toUpperCase(), label: assignee }));
+    const selectedTeamName = getSelectedTeamName();
+
+    if (selectedTeamMembers && selectedTeamName) {
+      const teamItems = selectedTeamMembers
+        .sort((a, b) => a.localeCompare(b))
+        .map(formatAssigneeToItem);
+
+      options.push({
+        group: selectedTeamName,
+        items: teamItems,
+      });
     } else {
-      return ALL_ASSIGNEES.map((assignee) => ({ value: assignee.toUpperCase(), label: assignee }));
+      TEAMS.forEach(team => {
+        const teamItems = team.members
+          .sort((a, b) => a.localeCompare(b))
+          .map(formatAssigneeToItem);
+
+        if (teamItems.length > 0) {
+          options.push({
+            group: team.label,
+            items: teamItems,
+          });
+        }});
     }
-  }, [currentFilters.teamId, getSelectedTeamMembers]);
+    return options;
+  }, [currentFilters.teamId, getSelectedTeamMembers, getSelectedTeamName]);
 
   return (
-    <FiltersContainer>
-      <FiltersContents>
+    <Group 
+      gap="sm" 
+      justify="flex-end" 
+      align="flex-end"
+      style={{
+        flex: 2,
+        padding: '0.5rem',
+        borderRadius: '24px',
+        marginBottom: '10px',
+        flexWrap: 'wrap'
+      }}
+    >
+      <Group gap="md">
         <CustomSelectField
-          label="Equipo"
+          placeholder="Equipo"
           value={currentFilters.teamId || ''}
-          onChange={(e) => {
-            updateFilter('teamId', e.target.value);
+          onChange={(value) => {
+            updateFilter('teamId', value || undefined);
             updateFilter('assignee', undefined); 
           }}
-          InputLabelProps={{
-            shrink: false,
-            style: currentFilters.teamId
-              ? { display: 'none' }
-              : undefined
-          }}
-          options={[
+          data={[
             { value: '', label: 'Todos los equipos' },
             ...TEAMS.map((team) => ({ value: team.id, label: team.label })),
           ]}
         />
         <CustomSelectField
-          label="Proyecto"
+          placeholder="Proyecto"
           value={currentFilters.project || ''}
-          onChange={(e) => updateFilter('project', e.target.value)}
-          InputLabelProps={{
-            shrink: false,
-            style: currentFilters.project
-              ? { display: 'none' }
-              : undefined
-          }}
-          options={[
+          onChange={(value) => updateFilter('project', value || undefined)}
+          data={[
             { value: '', label: 'Todos los proyectos' },
             ...projects.map((project) => ({ value: project, label: project })),
           ]}
         />
+        <CustomSelectField
+          placeholder="Asignado"
+          value={currentFilters.assignee?.toUpperCase() || ''}
+          onChange={(value) => {
+            updateFilter('assignee', value || undefined);
+            const team = findTeamByAssignee(value || '');
+            updateFilter('teamId', team ? team.id : undefined);
+          }}
+          data={[
+            { value: '', label: 'Todos los asignados' },
+            ...assigneeOptions,
+          ]}
+        />
+      </Group>
 
-      <CustomSelectField
-        label="Asignado"
-        value={currentFilters.assignee?.toUpperCase() || ''}
-        onChange={(e) => {
-          updateFilter('assignee', e.target.value)
-          // const team = findTeamByAssignee(e.target.value || '');
-          // updateFilter('teamId', team ? team.id : undefined);
-        }}
-        InputLabelProps={{
-          shrink: false,
-          style: currentFilters.assignee
-            ? { display: 'none' }
-            : undefined
-        }}
-        options={[
-          { value: '', label: 'Todos los asignados' },
-          ...assigneeOptions,
-        ]}
-      />
-
-      </FiltersContents>
       <Button
-        variant="outlined"
+        variant="gradient"
+        gradient={{ from: '#3C2052', to: '#4a3873', deg: 90 }}
         onClick={resetFilters}
-        endIcon={<RestartAlt fontSize="small"/>}
-        sx={{ 
-          height: 40,
-          border: 'none',
-          color: '#ffffff',
-          fontSize: 12,
-          background: `linear-gradient(to left, #3C2052, #4a3873)`,
-          borderRadius: '24px',
-          '&:hover': {
-            borderColor: '#ffffff'
+        rightSection={<IconRefresh size={16} />}
+        size="sm"
+        radius="xl"
+        styles={{
+          root: {
+            height: '40px',
+            color: '#ffffff',
+            fontSize: '12px',
+            '&:hover': {
+              borderColor: '#ffffff'
+            }
           }
         }}
       >
         Limpiar
-        
       </Button>
-    </FiltersContainer>
+    </Group>
   );
 };

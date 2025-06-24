@@ -1,0 +1,89 @@
+@use '../../styles/variables' as v;
+
+.columnContainer {
+  flex: 1;
+  display: inline-grid;
+  justify-content: center;
+  text-align: start;
+  background-color: #aab6dd2e;
+  padding: v.spacing(md) v.spacing(xs);
+  border-radius: v.border-radius(xl);
+}
+
+.columnContent {
+  min-width: 250px;
+  min-height: 300px;
+  height: 80vh;
+  border-radius: v.border-radius(md);
+  padding: 0 v.spacing(xs);
+  position: relative;
+  overflow: hidden;
+}
+
+.columnHeaderWrapper {
+  position: relative;
+  display: flex;
+  margin: 0 0 v.spacing(sm) v.spacing(sm);
+  padding: v.spacing(xs) v.spacing(md);
+  justify-content: space-between;
+  align-items: center;
+  border-radius: v.border-radius(xl);
+  background-color: var(--bg-color);
+  gap: 1rem;
+}
+
+.columnHeader {
+  font-size: v.font-size(sm);
+  font-weight: v.font-weight(semibold);
+  text-transform: uppercase;
+  color: var(--title-color);
+  margin: 0;
+  display: inline-block;
+  text-align: center;
+}
+
+.countBadge {
+  top: v.spacing(xs);
+  right: v.spacing(xs);
+  background-color: v.color(white);
+  color: v.color(primary);
+  border-radius: 50%;
+  min-width: 30px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: v.font-size(xs);
+  font-weight: v.font-weight(bold);
+  box-shadow: v.shadow(sm);
+  z-index: 1;
+}
+
+.hoursBadge {
+  font-size: v.font-size(sm);
+  gap: v.spacing(xs);
+  color: var(--title-color);
+  padding: v.spacing(xs) v.spacing(sm);
+  border-radius: v.border-radius(sm);
+  align-items: center;
+  justify-content: center;
+  display: inline-flex;
+}
+
+.issuesList {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: v.spacing(xs);
+  margin-top: v.spacing(xs);
+  padding: v.spacing(md) 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  align-items: center;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

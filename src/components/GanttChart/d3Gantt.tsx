@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import * as d3 from 'd3';
-import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import type { ParsedJiraIssue } from '@/types/jira';
 import { getProjectColor, parseJiraIssuesForGantt } from './GanttChartUtils';
 import { drawGanttChart } from './GanttChartDrawing';
@@ -27,7 +27,7 @@ const D3GanttChart: React.FC = () => {
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
 
   const allIssuesFlattened = useMemo(() => {
-    return data?.pages.flatMap(page => page.issues) || [];
+    return data?.pages.flatMap(page => page.data[status].issues) || [];
   }, [data]);
 
   const inProgressIssues = useMemo(() => filterInProgressIssues(allIssuesFlattened), [allIssuesFlattened]);
@@ -133,7 +133,7 @@ const D3GanttChart: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: '1rem', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ padding: '2rem 1.5rem', position: 'relative', display: 'flex', flexDirection: 'column' }}>
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -191,7 +191,7 @@ const D3GanttChart: React.FC = () => {
             }}
             title="Semana Anterior"
           >
-            <ArrowBackIosNew fontSize="small" />
+            <IconChevronLeft size={24} />
           </button>
           <button
             onClick={handleNextWeek}
@@ -210,7 +210,7 @@ const D3GanttChart: React.FC = () => {
             }}
             title="Semana Siguiente"
           >
-            <ArrowForwardIos fontSize="small" />
+            <IconChevronRight size={24} />
           </button>
         </div>
       </div>

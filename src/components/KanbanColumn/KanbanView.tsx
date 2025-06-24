@@ -1,14 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { useIssuesData } from '@hooks/useIssues';
 import { KanbanColumn } from '@components/KanbanColumn/KanbanColumn';
-import {
-  filterTodoIssues,
-  filterInProgressIssues,
-  filterAwaitingApprovalIssues,
-  filterDetainedIssues,
-  calculateTotalHours,
-} from '@utils/issueFilters';
-import { ColumnsContainer, ErrorMessage } from '../../pages/Dashboard/Dashboard.styles';
+import classes from '../../pages/Dashboard/Dashboard.module.scss'
 
 export const KanbanView: React.FC = () => {
   const {
@@ -22,9 +15,16 @@ export const KanbanView: React.FC = () => {
   } = useIssuesData();
 
 
-  const allIssuesFlattened = useMemo(() => {
-    return data?.pages.flatMap(page => page.issues) || [];
-  }, [data]);
+  const getIssuesAndTotal = (status: 'Por hacer' | 'En curso' | 'Esperando aprobación' | 'Detenida') => {
+    const issues = data?.pages.flatMap(page => page.data[status]?.issues || []) || [];
+    const total = data?.pages.reduce((sum, page) => sum + (page.data[status]?.total || 0), 0) || 0;
+    return { issues, total };
+  };
+
+  const todoIssues = useMemo(() => getIssuesAndTotal('Por hacer'), [data]);
+  const inProgressIssues = useMemo(() => getIssuesAndTotal('En curso'), [data]);
+  const awaitingApprovalIssues = useMemo(() => getIssuesAndTotal('Esperando aprobación'), [data]);
+  const detainedIssues = useMemo(() => getIssuesAndTotal('Detenida'), [data]);
 
   const loadMoreIssues = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage && !isLoading) {
@@ -32,26 +32,16 @@ export const KanbanView: React.FC = () => {
     }
   }, [hasNextPage, isFetchingNextPage, isLoading, fetchNextPage]);
 
-  const todoIssues = useMemo(() => filterTodoIssues(allIssuesFlattened), [allIssuesFlattened]);
-  const inProgressIssues = useMemo(() => filterInProgressIssues(allIssuesFlattened), [allIssuesFlattened]);
-  const awaitingApprovalIssues = useMemo(() => filterAwaitingApprovalIssues(allIssuesFlattened), [allIssuesFlattened]);
-  const detainedIssues = useMemo(() => filterDetainedIssues(allIssuesFlattened), [allIssuesFlattened]);
-
-  const totalTodoHours = useMemo(() => calculateTotalHours(todoIssues), [todoIssues]);
-  const totalInProgressHours = useMemo(() => calculateTotalHours(inProgressIssues), [inProgressIssues]);
-  const totalDoneHours = useMemo(() => calculateTotalHours(awaitingApprovalIssues), [awaitingApprovalIssues]);
-  const totalCancelHours = useMemo(() => calculateTotalHours(detainedIssues), [detainedIssues]);
 
   if (isError) {
-    return <ErrorMessage>Error al cargar incidencias: {error?.message || 'Error desconocido'}</ErrorMessage>;
+    return <div className={classes.errorMessage}>Error al cargar incidencias: {error?.message || 'Error desconocido'}</div>;
   }
 
   return (
-    <ColumnsContainer>
+    <div className={classes.columnsContainer}>
       <KanbanColumn
         title="Backlog"
-        issues={todoIssues}
-        totalHours={totalTodoHours}
+        data={todoIssues}
         titleColor="#ffffff"
         borderColor="#857C99"
         bgColor="#3f3ead"
@@ -63,8 +53,7 @@ export const KanbanView: React.FC = () => {
       />
       <KanbanColumn
         title="En progreso"
-        issues={inProgressIssues}
-        totalHours={totalInProgressHours}
+        data={inProgressIssues}
         titleColor="#ffffff"
         borderColor="#f6b46b"
         bgColor="#f3b03f"
@@ -76,8 +65,7 @@ export const KanbanView: React.FC = () => {
       />
       <KanbanColumn
         title="Esperando Aprobacion"
-        issues={awaitingApprovalIssues}
-        totalHours={totalDoneHours}
+        data={awaitingApprovalIssues}
         titleColor="#ffffff"
         borderColor="#65D9A9"
         bgColor="#22C55E"
@@ -89,8 +77,7 @@ export const KanbanView: React.FC = () => {
       />
       <KanbanColumn
         title="Detenido"
-        issues={detainedIssues}
-        totalHours={totalCancelHours}
+        data={detainedIssues}
         titleColor="#ffffff"
         borderColor="#ef496f"
         bgColor="#e4484b"
@@ -100,6 +87,6 @@ export const KanbanView: React.FC = () => {
         loadMoreIssues={loadMoreIssues}
         isLoading={isLoading}
       />
-    </ColumnsContainer>
+    </div>
   );
 };
