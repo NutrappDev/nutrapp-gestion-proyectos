@@ -57,7 +57,7 @@ export const TEAMS: Team[] = [
   }
 ];
 
-export const ALL_ASSIGNEES = [...TEAM_DEVELOPMENT_MEMBERS, ...TEAM_OPERATIONS_MEMBERS, ...TEAM_DESIGN_MEMBERS].sort();
+export const ALL_ASSIGNEES = [...TEAM_DEVELOPMENT_MEMBERS, ...TEAM_OPERATIONS_MEMBERS, ...TEAM_DESIGN_MEMBERS].sort((a, b) => a.localeCompare(b));
 
 export const findTeamByAssignee = (assigneeName: string): Team | undefined => {
   const normalizedAssignee = assigneeName.trim().toLowerCase();
