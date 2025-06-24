@@ -4,13 +4,14 @@ import { Dashboard } from './pages/Dashboard/Dashboard';
 import { FiltersProvider } from './context/FiltersContext';
 import { NotFound } from './pages/NotFound';
 import './styles/global.scss';
-import './styles/App.css'
+import { MantineProvider } from '@mantine/core';
 
 function App() {
   const queryClient = new QueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <MantineProvider >
+      <QueryClientProvider client={queryClient}>
       <FiltersProvider>
         <BrowserRouter basename="/nutrapp-gestion-proyectos">
           <Routes>
@@ -20,6 +21,7 @@ function App() {
         </BrowserRouter>
       </FiltersProvider>
     </QueryClientProvider>
+    </MantineProvider>
   )
 }
 

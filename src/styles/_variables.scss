@@ -1,0 +1,185 @@
+// Colores
+// --------------------------------------------------
+$colors: (
+  primary: #3c2052,
+  secondary: #6a408c,
+  accent: #6C4AB6,
+  error: #ff5630,
+  warning: #ffab00,
+  success: #36b37e,
+  info: #00b8d9,
+  dark: #171818,
+  gray: #5E6C84,
+  light: #F4F5F7,
+  white: #ffffff
+);
+
+// Espaciados
+// --------------------------------------------------
+$spacing: (
+  xs: 0.25rem, // 4px
+  sm: 0.5rem, // 8px
+  md: 1rem, // 16px (base)
+  lg: 1.5rem, // 24px
+  xl: 2rem, // 32px
+  xxl: 3rem // 48px
+);
+
+// Tipografía
+// --------------------------------------------------
+$font-sizes: (
+  xs: 0.75rem,
+  sm: 0.875rem,
+  base: 1rem,
+  md: 1.5rem,
+  lg: 2rem,
+  xl: 2.5rem,
+  xxl: 3.5rem
+);
+
+$font-weights: (
+  light: 300,
+  regular: 400,
+  medium: 500,
+  semibold: 600,
+  bold: 700
+);
+
+// Breakpoints
+// --------------------------------------------------
+$breakpoints: (
+  xs: 480px,
+  sm: 640px,
+  md: 768px,
+  lg: 1024px,
+  xl: 1280px,
+  xxl: 1536px
+);
+
+// Bordes
+// --------------------------------------------------
+$border-radius: (
+  sm: 4px,
+  md: 8px,
+  lg: 16px,
+  xl: 24px,
+  full: 9999px
+);
+
+$border-widths: (
+  thin: 1px,
+  medium: 2px,
+  thick: 4px
+);
+
+// Sombras
+// --------------------------------------------------
+$shadows: (
+  sm: 0 1px 3px rgba(0, 0, 0, 0.1),
+  md: 0 2px 6px rgba(0, 0, 0, 0.15),
+  lg: 0 4px 12px rgba(0, 0, 0, 0.2),
+  xl: 0 8px 24px rgba(0, 0, 0, 0.25)
+);
+
+// Transiciones
+// --------------------------------------------------
+$transitions: (
+  fast: 0.15s,
+  normal: 0.3s,
+  slow: 0.45s
+);
+
+// =============================================
+// Funciones de ayuda (Mantienen la consistencia y evitan errores tipográficos)
+// =============================================
+@use "sass:map";
+
+@function color($key) {
+  @if not map.has-key($colors, $key) {
+    @error "Color '#{$key}' no existe en el mapa $colors.";
+  }
+  @return map.get($colors, $key);
+}
+
+@function spacing($key) {
+  @if not map.has-key($spacing, $key) {
+    @error "Espaciado '#{$key}' no existe en el mapa $spacing.";
+  }
+  @return map.get($spacing, $key);
+}
+
+@function font-size($key) {
+  @if not map.has-key($font-sizes, $key) {
+    @error "Tamaño de fuente '#{$key}' no existe en el mapa $font-sizes.";
+  }
+  @return map.get($font-sizes, $key);
+}
+
+@function font-weight($key) {
+  @if not map.has-key($font-weights, $key) {
+    @error "Peso de fuente '#{$key}' no existe en el mapa $font-weights.";
+  }
+  @return map.get($font-weights, $key);
+}
+
+@function breakpoint($key) {
+  @if not map.has-key($breakpoints, $key) {
+    @error "Breakpoint '#{$key}' no existe en el mapa $breakpoints.";
+  }
+  @return map.get($breakpoints, $key);
+}
+
+@function border-radius($key) {
+  @if not map.has-key($border-radius, $key) {
+    @error "Border-radius '#{$key}' no existe en el mapa $border-radius.";
+  }
+  @return map.get($border-radius, $key);
+}
+
+@function shadow($key) {
+  @if not map.has-key($shadows, $key) {
+    @error "Sombra '#{$key}' no existe en el mapa $shadows.";
+  }
+  @return map.get($shadows, $key);
+}
+
+@function transition($key) {
+  @if not map.has-key($transitions, $key) {
+    @error "Transición '#{$key}' no existe en el mapa $transitions.";
+  }
+  @return map.get($transitions, $key);
+}
+
+// =============================================
+// Mixins útiles
+// =============================================
+@mixin respond-to($breakpoint) {
+  @media (max-width: breakpoint($breakpoint)) {
+    @content;
+  }
+}
+
+@mixin hover-effect {
+  transition: all transition(normal) ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: shadow(md);
+  }
+}
+
+@mixin focus-ring {
+  outline: 2px solid color(accent);
+  outline-offset: 2px;
+}
+
+@mixin sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

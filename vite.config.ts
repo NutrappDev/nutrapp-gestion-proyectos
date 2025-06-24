@@ -20,4 +20,11 @@ export default defineConfig({
     }
   },
   base: '/nutrapp-gestion-proyectos/',
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@use "@/styles/variables" as *;`
+      },
+    },
+  },
 })
