@@ -8,7 +8,7 @@ import { SummaryCard } from './summaryCard';
 import { useFiltersContext } from '@/context/FiltersContext';
 import { ALL_ASSIGNEES, TEAMS } from '@/constants/team';
 
-import classes from './UserIssuesSummary.module.scss';
+import classes from './userIssuesSummary.module.scss';
 
 const CARD_WIDTH_PX = 136;
 const CARD_GAP_PX = 4;
