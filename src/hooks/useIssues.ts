@@ -1,6 +1,6 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 export type { FetchIssuesResponse } from '@/api/jiraApi';
-import { fetchIssues } from '@/api/jiraApi';
+import { fetchAssigneesWithStats, fetchIssues } from '@/api/jiraApi';
 import { useFiltersContext } from '@/context/FiltersContext';
 import { ALL_ASSIGNEES } from '@/constants/team';
 
@@ -35,6 +35,15 @@ export const useIssuesData = (status?: string ) => {
       if (lastPage.isLast) return undefined;
       return allPages.length + 1;
     },
+    staleTime: 1000 * 60 * 5 // 5 minutos de cache
+  });
+};
+
+export const useAssigneesWithStats = (assignees: string | string[]) => {
+  return useQuery({
+    queryKey: ['assignees-with-stats', assignees],
+    queryFn: () => fetchAssigneesWithStats(assignees),
+    enabled: !!assignees && (Array.isArray(assignees) ? assignees.length > 0 : true),
     staleTime: 1000 * 60 * 5 // 5 minutos de cache
   });
 };

@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
-import type { JiraUsers, JiraIssue, JiraProject } from '../types/jira';
+import type { JiraUsers, JiraIssue, JiraProject, JiraAssignee } from '../types/jira';
 
 
 const API_BASE_URL: string = import.meta.env.VITE_JIRA_API_BASE_URL;
@@ -45,7 +45,13 @@ interface FetchIssuesParams {
 }
 
 export interface FetchIssuesResponse {
-  issues: JiraIssue[];
+  data: Record<
+    'Por hacer' | 'En curso' | 'Esperando aprobación' | 'Detenida',
+    {
+      issues: JiraIssue[];
+      total: number;
+    }
+  >;
   total: number;
   isLast: boolean;
 }
@@ -82,4 +88,19 @@ export const fetchUsers = async (): Promise<JiraUsers[]> => {
 export const fetchProjects = async (): Promise<JiraProject[]> => {
   const response = await jiraApiClient.get<JiraProject[]>('/issues/projects');
   return response.data;
+};
+
+export const fetchAssigneesWithStats = async (
+  assignees: string | string[]
+): Promise<Array<{ info: JiraAssignee; total: number; totalByStatus: Record<string, number> }>> => {
+  const queryParams = new URLSearchParams();
+  
+  if (Array.isArray(assignees)) {
+    assignees.forEach(a => queryParams.append('assignee', a));
+  } else {
+    queryParams.append('assignee', assignees);
+  }
+
+  const response = await jiraApiClient.get('/issues/users-with-stats', { params: queryParams });
+  return response.data.data;
 };

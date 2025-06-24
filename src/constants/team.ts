@@ -30,8 +30,14 @@ export const TEAM_OPERATIONS_MEMBERS = [
   'Yefer Enrique García Moncada', 
   'Michelle Carolina Castro Muñoz',
   'David Alberto Espitia Quiceno',
-  'Dannerys Gomez Polanco'
+  'Dannerys Gomez Polanco',
+  'Mesa de ayuda Nutrapp'
 ];
+
+export const TEAM_INFRAESTRUCTURA_MEMBERS = [
+  'Juan David Muñoz Cavanzo',
+  'Isabel Gil'
+]
 
 export const TEAMS: Team[] = [
   {
@@ -54,10 +60,17 @@ export const TEAMS: Team[] = [
     label: 'Equipo de Diseño',
     members: TEAM_DESIGN_MEMBERS,
     initials: 'DES',
+  },
+  {
+    id: 'infrastructure',
+    name: 'INFRAESTRUCTURA',
+    label: 'Equipo de Infraestructura',
+    members: TEAM_INFRAESTRUCTURA_MEMBERS,
+    initials: 'INF',
   }
 ];
 
-export const ALL_ASSIGNEES = [...TEAM_DEVELOPMENT_MEMBERS, ...TEAM_OPERATIONS_MEMBERS, ...TEAM_DESIGN_MEMBERS].sort((a, b) => a.localeCompare(b));
+export const ALL_ASSIGNEES = [...TEAM_DEVELOPMENT_MEMBERS, ...TEAM_OPERATIONS_MEMBERS, ...TEAM_DESIGN_MEMBERS,...TEAM_INFRAESTRUCTURA_MEMBERS].sort((a, b) => a.localeCompare(b));
 
 export const findTeamByAssignee = (assigneeName: string): Team | undefined => {
   const normalizedAssignee = assigneeName.trim().toLowerCase();

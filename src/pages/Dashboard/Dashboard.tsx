@@ -1,27 +1,17 @@
 import { useMemo } from 'react';
-import Box from '@mui/material/Box';
-import { Timeline, ViewKanban } from '@mui/icons-material';
+import { Tabs, rem } from '@mantine/core';
+import { IconTimeline, IconLayoutKanban } from '@tabler/icons-react';
 import { useProjects } from '@hooks/useProjects';
-import { useDashboardTabs } from '@hooks/useDashboardTabs';
 import { Filters } from '@components/Filters/Filters';
-import { TabPanel, a11yProps } from '@components/UI/TabPanel';
-import { TEAM_DEVELOPMENT_MEMBERS, TEAM_OPERATIONS_MEMBERS } from '@constants/team';
+import { ALL_ASSIGNEES } from '@constants/team';
 import { useFiltersContext } from '@/context/FiltersContext';
 import D3GanttChart from '@components/GanttChart/d3Gantt';
-import {
-  DashboardContainer,
-  AnimatedTitle,
-  CustomTabs,
-  CustomTab,
-  AnimatedContent
-} from './Dashboard.styles';
-
 import { KanbanView } from '@/components/KanbanColumn/KanbanView';
 import { UserIssuesSummary } from '@/components/UserSummary/UserIssuesSummary';
+import classes from './Dashboard.module.scss'; 
 
 export const Dashboard = () => {
   const { projects, loading: projectLoading } = useProjects();
-  const { activeTab, handleTabChange } = useDashboardTabs();
   const { getSelectedTeamName } = useFiltersContext();
 
   const allProjects = useMemo(() => {
@@ -30,61 +20,53 @@ export const Dashboard = () => {
     return [...projectNames].sort((a, b) => a.localeCompare(b));
   }, [projects, projectLoading]);
 
-  const assignees = [...TEAM_DEVELOPMENT_MEMBERS,...TEAM_OPERATIONS_MEMBERS].sort((a, b) => a.localeCompare(b));
-
   const dashboardTitle = useMemo(() => {
     const selectedTeamName = getSelectedTeamName();
-    return selectedTeamName ? selectedTeamName: 'NUTRAPP';
-  }, [ getSelectedTeamName]);
+    return selectedTeamName ? selectedTeamName : 'NUTRAPP';
+  }, [getSelectedTeamName]);
 
   return (
-    <DashboardContainer>
-      <AnimatedContent key={dashboardTitle}>
+    <div className={classes.dashboardContainer}>
+      <div className={classes.animatedContent} key={dashboardTitle}>
         <div className="flex items-center justify-center px-4 py-4 my-12">
-          <AnimatedTitle>
-            {dashboardTitle}
-          </AnimatedTitle>
+          <h1 className={classes.animatedTitle}>{dashboardTitle}</h1>
         </div>
-      </AnimatedContent>
+      </div>
       <UserIssuesSummary />
+      
+      <Tabs
+        defaultValue={"Kanban"}
+        aria-label="board tabs"
+        classNames={{
+          root: classes.tabsRoot,
+          list: classes.tabsList,
+          tab: classes.tab,
+          panel: classes.tabPanel
+        }}
+      >
+        <Tabs.List style={{padding:'0 1.5rem'}}>
+          <Tabs.Tab
+            value="Kanban"
+            leftSection={<IconLayoutKanban style={{ width: rem(18), height: rem(18) }} />}
+          >
+            List View
+          </Tabs.Tab>
+          <Tabs.Tab
+            value="Timeline"
+            leftSection={<IconTimeline style={{ width: rem(18), height: rem(18) }} />}
+          >
+            Timeline
+          </Tabs.Tab>
+          <Filters projects={allProjects} assignees={ALL_ASSIGNEES} />
+        </Tabs.List>
+        <Tabs.Panel value={'Kanban'} >
+          <KanbanView />
+        </Tabs.Panel>
+        <Tabs.Panel value={'Timeline'} >
+          <D3GanttChart />
+        </Tabs.Panel>
+      </Tabs>
 
-      <Box sx={{ 
-        borderBottom: 1, 
-        borderColor: 'divider', 
-        display: 'flex', 
-        justifyContent: 'space-between',
-        padding: '0 1.5rem',
-        boxShadow: '1px 2px 3px #DADADA',
-      }}>
-        <CustomTabs
-          value={activeTab}
-          onChange={handleTabChange}
-          aria-label="board tabs"
-          TabIndicatorProps={{
-            style: {
-              backgroundColor: '#3c2052',
-            },
-          }}
-          sx={{
-            color: '#3c2052'
-          }}
-        >
-          <CustomTab icon={<ViewKanban fontSize="small" />} iconPosition="start" label="List View" {...a11yProps(0)} />
-          <CustomTab icon={<Timeline fontSize="small" />} iconPosition="start" label="Timeline" {...a11yProps(1)} />
-        </CustomTabs>
-        <Filters
-          projects={allProjects}
-          assignees={assignees}
-        />
-      </Box>
-
-      <TabPanel value={activeTab} index={0}>
-        <KanbanView />
-      </TabPanel>
-
-      <TabPanel value={activeTab} index={1}>
-        <D3GanttChart />
-      </TabPanel>
-    </DashboardContainer>
+    </div>
   );
 };
