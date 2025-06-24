@@ -1,0 +1,104 @@
+@use '../../styles/variables' as v; 
+
+.summaryContainerWrapper {
+  position: relative;
+  max-width: 95%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.scrollGroup {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--card-gap-px);
+  padding: 1rem 0;
+  border-radius: 8px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none; // Firefox
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none; // IE/Edge
+
+  &::-webkit-scrollbar {
+    display: none; // Chrome, Safari, Opera
+  }
+
+  &[data-justify-content="center"] {
+    justify-content: center;
+  }
+
+  &[data-justify-content="flex-start"] {
+    justify-content: flex-start;
+  }
+}
+
+.scrollButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  border-radius: 50%;
+  padding: .8rem;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px #d0ced4;
+  color: v.color(primary);
+  border: none;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    background-color: adjust(v.color(primary), 8%); 
+    box-shadow: 0 4px 12px rgba(v.color(dark), 0.15);
+    cursor: pointer;
+  }
+
+  &:active {
+    background-color: v.color(light); 
+    color: rgb(140 138 144);
+    box-shadow: inset 0px 0px 3px #cbc4d2;
+  }
+
+  &[data-disabled] {
+    background-color: v.color(light); 
+    color: rgb(140 138 144);
+    opacity: 1;
+    cursor: not-allowed;
+    box-shadow: inset 0px 0px 3px #cbc4d2;
+  }
+}
+
+.scrollButton svg {
+  display: block;
+  margin: auto;
+}
+
+.scrollButtonLeft {
+  left: 0;
+}
+
+.scrollButtonRight {
+  right: 0;
+}
+
+
+.skeletonCardContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  margin: 8px;
+  border-radius: 16px;
+  width: var(--card-width-px);
+  height: var(--summary-card-inner-height-px);
+  flex-shrink: 0;
+  background-color: #fbf8ff;
+  background: linear-gradient(309deg, #ffffff, #f6f3fa99); 
+  box-shadow: 0px 4px 12px rgba(v.color(gray), 0.22); 
+}
+
+.skeletonCountsRow {
+  margin-top: 16px;
+  padding: 4.8px;
+  border-radius: 16px; 
+  background-color: #e7ebf8cf;
+}

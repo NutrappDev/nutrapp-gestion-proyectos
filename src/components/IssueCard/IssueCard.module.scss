@@ -1,0 +1,153 @@
+.card {
+  min-width: 100%;
+  max-width: 320px;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  margin-bottom: .5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.content {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.summary {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #171818;
+  cursor: pointer;
+  margin-bottom: 4px;
+}
+
+.keyContent {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #8da0f6;
+  background-color: #f8edff;
+  padding: 4px 8px;
+  border-radius: 11px;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 1.2;
+}
+
+.externalLink {
+  color: #452a5a9a;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  &:hover {
+    background: transparent;
+  }
+}
+
+.avatar {
+  cursor: pointer;
+  background-color: #f0f0f0;
+}
+
+.avatarFallback {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.dateBadge {
+  color: #5E6C84;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 4px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.hoursBadge {
+  font-size: 0.8rem;
+  color: #9184c6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.clockIcon {
+  color: #9184c6;
+}
+
+.commentButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: #9f96c4;
+  cursor: pointer;
+
+  &:hover {
+    background: transparent;
+  }
+}
+
+.commentButton svg {
+  display: block;
+  margin: auto;
+}
+
+.commentIndicator {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ff5630;
+}
+
+.commentContainer {
+  margin-top: 8px;
+  padding: 8px;
+  background-color: #F4F5F7;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  color: #6B778C;
+  font-size: 0.75rem;
+}
+
+.commentContent {
+  color: #172B4D;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

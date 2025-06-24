@@ -3,13 +3,14 @@ import { Avatar, Typography, Box, Tooltip } from '@mui/material';
 import styled from '@emotion/styled';
 import { UserIssueCountsByCategory } from '@/utils/issueUtils';
 import { useFiltersContext } from '@/context/FiltersContext';
-import { TEAMS } from '@/constants/team';
+import { findTeamByAssignee, TEAMS } from '@/constants/team';
 
 interface UserAvatarCardProps {
   name: string;
   avatarUrl?: string;
   initials: string;
   counts: UserIssueCountsByCategory;
+  selected?: boolean;
 }
 const avatarColors = [
   '#6C4AB6', '#3C2052', '#F7B801', '#F18701', '#F35B04', '#43BCCD', '#3A6EA5', '#FF3A55', '#FAB744', '#3F3EAD'
@@ -24,7 +25,7 @@ function getAvatarColor(name: string) {
   return avatarColors[index];
 }
 
-const CardContainer = styled(Box)`
+const CardContainer = styled(Box)<{ $selected?: boolean }>`
  display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,9 +35,13 @@ const CardContainer = styled(Box)`
   width: 8.5rem;
   flex-shrink: 0;
   background-color: #fbf8ff;
+  scroll-snap-align: center;
   background: linear-gradient(309deg, #ffffff, #f6f3fa99);
-  border: 1px solid #eae9eba1;
-  box-shadow: 0px 4px 12px rgb(150 141 161 / 22%), -4px -4px 4px #ffff;
+  border: 2px solid ${({ $selected }) => ($selected ? '#3f3ead' : '#eae9eba1')};
+  box-shadow: ${({ $selected }) =>
+    $selected
+      ? '0px 8px 16px 0px #3f3ead33, 0px 0px 2px 0px #3f3ead99'
+      : '0px 4px 12px rgb(150 141 161 / 22%), -4px -4px 4px #ffff'};
   transition: transform 0.3s ease-in-out, box-shadow 0.2s ease-in-out;
   animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -53,7 +58,7 @@ const CardContainer = styled(Box)`
 
   &:hover {
     transform: translateY(-2px); 
-    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.12);
+    box-shadow: 0px 8px 16px 0px #3f3ead33;
   }
 `;
 
@@ -131,7 +136,7 @@ const CountsRow = styled(Box)`
   background-color: #e7ebf8cf;
 `;
 
-export const SummaryCard: React.FC<UserAvatarCardProps> = ({ name, avatarUrl, initials, counts }) => {
+export const SummaryCard: React.FC<UserAvatarCardProps> = ({ name, avatarUrl, initials, counts, selected = false }) => {
   const { filters, updateFilter } = useFiltersContext(); 
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -161,13 +166,14 @@ export const SummaryCard: React.FC<UserAvatarCardProps> = ({ name, avatarUrl, in
         updateFilter('teamId', undefined);
       } else {
         updateFilter('assignee', name);
-        updateFilter('teamId', undefined);
+        const team = findTeamByAssignee(name || '');
+        updateFilter('teamId', team ? team.id : undefined);
       }
     }
   };
 
   return (
-    <CardContainer>
+    <CardContainer $selected={selected}>
       <Typography variant="body2" align="center" noWrap sx={{ 
         width: '100%', 
         fontSize: '0.7rem',
