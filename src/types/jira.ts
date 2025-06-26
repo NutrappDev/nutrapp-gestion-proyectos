@@ -24,6 +24,7 @@ export interface JiraIssue {
   project: string;
   duedate: string;
   url: string;
+  reporter: JiraAssignee | null;
   lastComment?: JiraComment;
 }
 

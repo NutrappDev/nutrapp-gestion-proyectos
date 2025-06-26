@@ -65,16 +65,13 @@
 }
 
 .avatarFallback {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
+  border-radius: 50%;
+  background: #b1a7e6;
 }
 
 .dateBadge {
@@ -150,4 +147,43 @@
   color: #172B4D;
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+.reporterInfoContainer {
+  margin-top: 6px;
+  margin-bottom: 2px;
+  background: #f4f2fa;
+  border-radius: 8px;
+  padding: 16px 14px 12px 14px;
+  box-shadow: 0 2px 8px rgba(141,160,246,0.10);
+  font-size: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.infoButton {
+  background: transparent;
+  border: none;
+  color: #9f96c4;
+  cursor: pointer;
+  margin-left: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, box-shadow 0.15s;
+  border-radius: 50%;
+  padding: 2px;
+  &:hover {
+    color: #452a5a;
+    background: #f3f0fa;
+    box-shadow: 0 2px 8px rgba(141,160,246,0.10);
+  }
+}
+
+.infoButton svg{
+  display: block;
+  margin: auto;
 }

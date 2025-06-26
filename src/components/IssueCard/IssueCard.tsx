@@ -1,4 +1,4 @@
-import { IconArrowUpRight, IconClock, IconMessage } from '@tabler/icons-react';
+import { IconArrowUpRight, IconClock, IconMessage, IconInfoCircle } from '@tabler/icons-react';
 import type { JiraIssue } from '@/types/jira';
 import { Paper, Box, Avatar, Text, Group, ActionIcon, Collapse } from '@mantine/core';
 import { PriorityIcon } from './PriorityIcon';
@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { JiraCommentRenderer } from '../UI/JiraCommentRenderer';
 import { useFiltersContext } from '@/context/FiltersContext';
 import classes from './IssueCard.module.scss';
+import { ReporterInfo } from './ReporterInfo';
 
 interface IssueCardProps {
   issue: JiraIssue;
@@ -23,6 +24,7 @@ const stringToColor = (str: string) => {
 export const IssueCard = ({ issue }: IssueCardProps) => {
   const { updateFilter } = useFiltersContext();
   const [showComment, setShowComment] = useState(false);
+  const [showMoreInfo, setShowMoreInfo] = useState(false);
   const initials = issue.assignee?.initials || 'NA';
   const bgColor = stringToColor(initials);
 
@@ -92,6 +94,7 @@ export const IssueCard = ({ issue }: IssueCardProps) => {
           </Group>
 
           <Group gap={8}>
+            
             {issue.storyPoints! > 0 && (
               <Text  unstyled className={classes.hoursBadge}>
                 <IconClock size={20} className={classes.clockIcon} />
@@ -112,9 +115,29 @@ export const IssueCard = ({ issue }: IssueCardProps) => {
                 <Box className={classes.commentIndicator} />
               </ActionIcon>
             )}
+            {issue.reporter && (
+              <ActionIcon
+                unstyled
+                size={20}
+                className={classes.infoButton}
+                onClick={e => {
+                  e.stopPropagation();
+                  setShowMoreInfo(o => !o);
+                }}
+                title="Ver información de la incidencia"
+              >
+                <IconInfoCircle size={20} />
+              </ActionIcon>
+            )}
           </Group>
         </Group>
 
+
+        {issue.reporter && (
+          <Collapse in={showMoreInfo}>
+            <ReporterInfo reporter={issue.reporter} created={issue.created} />
+          </Collapse>
+        )}
         {issue.lastComment && (
           <Collapse in={showComment}>
             <Box className={classes.commentContainer}>

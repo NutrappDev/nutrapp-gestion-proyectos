@@ -1,9 +1,10 @@
-import { Button, Group } from '@mantine/core';
-import { IconRefresh } from '@tabler/icons-react';
+import { Button, Group, ActionIcon, Collapse, Box, useMantineTheme } from '@mantine/core';
+import { IconRefresh, IconFilter } from '@tabler/icons-react';
 import CustomSelectField from './CustomSelectField';
 import { useFiltersContext } from '@/context/FiltersContext';
 import { TEAMS, findTeamByAssignee } from '@/constants/team';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { useMediaQuery } from '@mantine/hooks';
 
 interface FiltersProps {
   projects: string[];
@@ -19,6 +20,9 @@ export const Filters = ({
   projects = []
 }: FiltersProps) => {
   const { filters: currentFilters, updateFilter, resetFilters, getSelectedTeamMembers, getSelectedTeamName } = useFiltersContext();
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const theme = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: 760px)`);
 
   const formatAssigneeToItem = (assigneeName: string) => ({
     value: assigneeName.toUpperCase(),
@@ -55,76 +59,135 @@ export const Filters = ({
     return options;
   }, [currentFilters.teamId, getSelectedTeamMembers, getSelectedTeamName]);
 
+  const filtersContent = (
+    <Group gap="md" justify="flex-end" >
+      <CustomSelectField
+        placeholder="Equipo"
+        value={currentFilters.teamId || ''}
+        onChange={(value) => {
+          console.log("value", value)
+          updateFilter('teamId', value || undefined);
+          updateFilter('assignee', undefined); 
+        }}
+        data={[
+          { value: '', label: 'Todos los equipos' },
+          ...TEAMS.map((team) => ({ value: team.id, label: team.label })),
+        ]}
+      />
+      <CustomSelectField
+        placeholder="Proyecto"
+        value={currentFilters.project || ''}
+        onChange={(value) => updateFilter('project', value || undefined)}
+        data={[
+          { value: '', label: 'Todos los proyectos' },
+          ...projects.map((project) => ({ value: project, label: project })),
+        ]}
+      />
+      <CustomSelectField
+        placeholder="Asignado"
+        value={currentFilters.assignee?.toUpperCase() || ''}
+        onChange={(value) => {
+          updateFilter('assignee', value || undefined);
+          if (value) {
+            const team = findTeamByAssignee(value);
+            updateFilter('teamId', team ? team.id : undefined);
+          }
+        }}
+        data={[
+          { value: '', label: 'Todos los asignados' },
+          ...assigneeOptions,
+        ]}
+      />
+    </Group>
+  );
+
   return (
-    <Group 
-      gap="sm" 
-      justify="flex-end" 
-      align="flex-end"
+    <Box
       style={{
         flex: 2,
         padding: '0.5rem',
         borderRadius: '24px',
         marginBottom: '10px',
-        flexWrap: 'wrap'
       }}
     >
-      <Group gap="md">
-        <CustomSelectField
-          placeholder="Equipo"
-          value={currentFilters.teamId || ''}
-          onChange={(value) => {
-            updateFilter('teamId', value || undefined);
-            updateFilter('assignee', undefined); 
+      {isMobile ? (
+        // Vista móvil con filtros colapsables
+        <Group gap="sm" justify="flex-end" align="center">
+          <ActionIcon
+            variant="light"
+            size="lg"
+            onClick={() => setFiltersOpen(!filtersOpen)}
+            style={{
+              backgroundColor: filtersOpen ? theme.colors.violet[1] : 'transparent',
+              borderRadius: 24,
+              color: filtersOpen ? theme.colors.violet[6] : theme.colors.gray[6],
+              border: `1px solid ${filtersOpen ? theme.colors.violet[3] : theme.colors.gray[3]}`,
+            }}
+          >
+            <IconFilter size={20} />
+          </ActionIcon>
+          
+          <Button
+            variant="gradient"
+            gradient={{ from: '#3C2052', to: '#4a3873', deg: 90 }}
+            onClick={resetFilters}
+            rightSection={<IconRefresh size={16} />}
+            size="sm"
+            radius="xl"
+            styles={{
+              root: {
+                height: '40px',
+                color: '#ffffff',
+                fontSize: '12px',
+                '&:hover': {
+                  borderColor: '#ffffff'
+                }
+              }
+            }}
+          >
+            Limpiar
+          </Button>
+          
+          <Collapse in={filtersOpen}>
+            <Box mt="md" style={{ width: '100%' }}>
+              {filtersContent}
+            </Box>
+          </Collapse>
+        </Group>
+      ) : (
+        // Vista desktop normal
+        <Group 
+          gap="sm" 
+          justify="flex-end" 
+          align="flex-end"
+          style={{
+            flexWrap: 'wrap'
           }}
-          data={[
-            { value: '', label: 'Todos los equipos' },
-            ...TEAMS.map((team) => ({ value: team.id, label: team.label })),
-          ]}
-        />
-        <CustomSelectField
-          placeholder="Proyecto"
-          value={currentFilters.project || ''}
-          onChange={(value) => updateFilter('project', value || undefined)}
-          data={[
-            { value: '', label: 'Todos los proyectos' },
-            ...projects.map((project) => ({ value: project, label: project })),
-          ]}
-        />
-        <CustomSelectField
-          placeholder="Asignado"
-          value={currentFilters.assignee?.toUpperCase() || ''}
-          onChange={(value) => {
-            updateFilter('assignee', value || undefined);
-            const team = findTeamByAssignee(value || '');
-            updateFilter('teamId', team ? team.id : undefined);
-          }}
-          data={[
-            { value: '', label: 'Todos los asignados' },
-            ...assigneeOptions,
-          ]}
-        />
-      </Group>
-
-      <Button
-        variant="gradient"
-        gradient={{ from: '#3C2052', to: '#4a3873', deg: 90 }}
-        onClick={resetFilters}
-        rightSection={<IconRefresh size={16} />}
-        size="sm"
-        radius="xl"
-        styles={{
-          root: {
-            height: '40px',
-            color: '#ffffff',
-            fontSize: '12px',
-            '&:hover': {
-              borderColor: '#ffffff'
-            }
-          }
-        }}
-      >
-        Limpiar
-      </Button>
-    </Group>
+        >
+          {filtersContent}
+          
+          <Button
+            variant="gradient"
+            gradient={{ from: '#3C2052', to: '#4a3873', deg: 90 }}
+            onClick={resetFilters}
+            rightSection={<IconRefresh size={16} />}
+            size="sm"
+            radius="xl"
+            styles={{
+              root: {
+                height: '40px',
+                color: '#ffffff',
+                fontSize: '12px',
+                '&:hover': {
+                  borderColor: '#ffffff'
+                }
+              }
+            }}
+          >
+            Limpiar
+          </Button>
+        </Group>
+      )}
+    </Box>
   );
 };

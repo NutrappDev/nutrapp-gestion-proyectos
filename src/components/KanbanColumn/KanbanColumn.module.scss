@@ -23,7 +23,7 @@
 .columnHeaderWrapper {
   position: relative;
   display: flex;
-  margin: 0 0 v.spacing(sm) v.spacing(sm);
+  margin: 0 v.spacing(sm) v.spacing(sm) v.spacing(sm);
   padding: v.spacing(xs) v.spacing(md);
   justify-content: space-between;
   align-items: center;

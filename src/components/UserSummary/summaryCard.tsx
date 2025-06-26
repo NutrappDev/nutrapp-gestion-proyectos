@@ -34,9 +34,9 @@ const CardContainer = styled(Box)<{ $selected?: boolean }>`
   border-radius: 16px;
   width: 8.5rem;
   flex-shrink: 0;
-  background-color: #fbf8ff;
+  background-color: #ffffff;
   scroll-snap-align: center;
-  background: linear-gradient(309deg, #ffffff, #f6f3fa99);
+  background: linear-gradient(309deg, #ffffff, #f6f3fa);
   border: 2px solid ${({ $selected }) => ($selected ? '#3f3ead' : '#eae9eba1')};
   box-shadow: ${({ $selected }) =>
     $selected
@@ -44,6 +44,9 @@ const CardContainer = styled(Box)<{ $selected?: boolean }>`
       : '0px 4px 12px rgb(150 141 161 / 22%), -4px -4px 4px #ffff'};
   transition: transform 0.3s ease-in-out, box-shadow 0.2s ease-in-out;
   animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: visible;
+  z-index: 10;
 
   @keyframes fadeIn {
     from {
@@ -60,6 +63,17 @@ const CardContainer = styled(Box)<{ $selected?: boolean }>`
     transform: translateY(-2px); 
     box-shadow: 0px 8px 16px 0px #3f3ead33;
   }
+`;
+
+const CardWrapper = styled(Box)<{ $selected?: boolean }>`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 8px;
+  width: 8.5rem;
+  flex-shrink: 0;
+  scroll-snap-align: center;
 `;
 
 const FlipContainer = styled(Box)`
@@ -173,54 +187,56 @@ export const SummaryCard: React.FC<UserAvatarCardProps> = ({ name, avatarUrl, in
   };
 
   return (
-    <CardContainer $selected={selected}>
-      <Typography variant="body2" align="center" noWrap sx={{ 
-        width: '100%', 
-        fontSize: '0.7rem',
-        color: '#948a9b',
-        fontWeight: 'bold',
-        marginBottom: '4px'
-      }}>
-        {name.split(' ')[0]}
-      </Typography>
-      <Tooltip title={name} arrow placement="top">
-        <FlipContainer
-          onClick={handleClick}
-          onMouseEnter={() => setIsFlipped(true)}
-          onMouseLeave={() => setIsFlipped(false)}
-        >
-          <FlipCardInner isFlipped={isFlipped}>
-            <FlipCardFace>
-              <StyledAvatar
-                alt={name}
-                src={avatarUrl || undefined}
-                bgcolor={!avatarUrl ? getAvatarColor(name) : undefined}
-              >
-                {initials}
-              </StyledAvatar>
-            </FlipCardFace>
+    <CardWrapper $selected={selected}>
+      <CardContainer $selected={selected}>
+        <Typography variant="body2" align="center" noWrap sx={{ 
+          width: '100%', 
+          fontSize: '0.7rem',
+          color: '#948a9b',
+          fontWeight: 'bold',
+          marginBottom: '4px'
+        }}>
+          {name.split(' ')[0]}
+        </Typography>
+        <Tooltip title={name} arrow placement="top">
+          <FlipContainer
+            onClick={handleClick}
+            onMouseEnter={() => setIsFlipped(true)}
+            onMouseLeave={() => setIsFlipped(false)}
+          >
+            <FlipCardInner isFlipped={isFlipped}>
+              <FlipCardFace>
+                <StyledAvatar
+                  alt={name}
+                  src={avatarUrl || undefined}
+                  bgcolor={!avatarUrl ? getAvatarColor(name) : undefined}
+                >
+                  {initials}
+                </StyledAvatar>
+              </FlipCardFace>
 
-            <FlipCardBack>
-              {counts.total- counts.awaitingApproval}
-            </FlipCardBack>
-          </FlipCardInner>
-        </FlipContainer>
-      </Tooltip>
-      
-      <CountsRow>
-        <CountCircle backgroundColor={colors.backlog}>
-          {counts.backlog}
-        </CountCircle>
+              <FlipCardBack>
+                {counts.total- counts.awaitingApproval}
+              </FlipCardBack>
+            </FlipCardInner>
+          </FlipContainer>
+        </Tooltip>
+        
+        <CountsRow>
+          <CountCircle backgroundColor={colors.backlog}>
+            {counts.backlog}
+          </CountCircle>
 
-        <CountCircle backgroundColor={colors.inProgress}>
-          {counts.inProgress}
-        </CountCircle>
+          <CountCircle backgroundColor={colors.inProgress}>
+            {counts.inProgress}
+          </CountCircle>
 
-        <CountCircle backgroundColor={colors.detained}>
-          {counts.detained}
-        </CountCircle>
+          <CountCircle backgroundColor={colors.detained}>
+            {counts.detained}
+          </CountCircle>
 
-      </CountsRow>
-    </CardContainer>
+        </CountsRow>
+      </CardContainer>
+    </CardWrapper>
   );
 };

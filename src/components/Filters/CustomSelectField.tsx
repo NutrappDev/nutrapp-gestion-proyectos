@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Select, rem } from '@mantine/core';
-import { IconChevronDown } from '@tabler/icons-react';
-
 
 type SimpleSelectOption = { value: string; label: string; [key: string]: any };
 interface GroupedSelectOption {
@@ -9,14 +7,17 @@ interface GroupedSelectOption {
   items: SimpleSelectOption[];
 }
 
-interface CustomSelectFieldProps{
+interface CustomSelectFieldProps {
   label?: React.ReactNode;
   placeholder?: string;
   value: string | null;
   data: (SimpleSelectOption | GroupedSelectOption | string)[];
   onChange: (value: string | null) => void;
   hideLabel?: boolean;
-};
+  isSearcheable?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
+}
 
 const CustomSelectField: React.FC<CustomSelectFieldProps> = ({
   label,
@@ -25,10 +26,13 @@ const CustomSelectField: React.FC<CustomSelectFieldProps> = ({
   data,
   onChange,
   hideLabel = false,
+  isSearcheable = false,
+  disabled = false,
+  readOnly = false,
   ...props
 }) => {
-  const [dropdownOpened, setDropdownOpened] = useState(false);
-  
+  // const [dropdownOpened, setDropdownOpened] = useState(false);
+
   return (
     <Select
       label={label}
@@ -36,25 +40,30 @@ const CustomSelectField: React.FC<CustomSelectFieldProps> = ({
       data={data as any}
       value={value}
       onChange={onChange}
-      clearable
+      clearable 
+      searchable={isSearcheable}
       radius="xl"
       size="sm"
-
-      rightSection={
-        <IconChevronDown 
-          style={{ 
-            width: rem(18), 
-            height: rem(18),
-            transform: dropdownOpened ? 'rotate(180deg)' : 'rotate(0deg)',
-            transition: 'transform 200ms ease', 
-          }} 
-          stroke={1.5} 
-        />
-      }
-      onDropdownOpen={() => setDropdownOpened(true)}
-      onDropdownClose={() => setDropdownOpened(false)}
-      
-      withCheckIcon={false} 
+      disabled={disabled}
+      readOnly={readOnly}
+      checkIconPosition="right"
+      // rightSection={
+      //   <IconChevronDown
+      //     style={{
+      //       width: rem(18),
+      //       height: rem(18),
+      //       transform: dropdownOpened ? 'rotate(180deg)' : 'rotate(0deg)',
+      //       transition: 'transform 200ms ease',
+      //       pointerEvents: 'none', 
+      //       color: '#3C2052',
+      //     }}
+      //     stroke={1.5}
+      //   />
+      // }
+      // rightSectionPointerEvents={value !== null && !disabled && !readOnly ? 'all' : 'none'}
+      // rightSectionWidth={rem(36)}
+      // onDropdownOpen={() => setDropdownOpened(true)}
+      // onDropdownClose={() => setDropdownOpened(false)}
 
       comboboxProps={{
         shadow: 'md',
@@ -78,7 +87,7 @@ const CustomSelectField: React.FC<CustomSelectFieldProps> = ({
               backgroundColor: 'transparent',
             },
             '&::-webkit-scrollbar-thumb': {
-              backgroundColor: '#3C2052', 
+              backgroundColor: '#3C2052',
               borderRadius: rem(10),
             },
             '&::-webkit-scrollbar-track': {
@@ -87,18 +96,16 @@ const CustomSelectField: React.FC<CustomSelectFieldProps> = ({
           },
         },
       }}
-      
-
       styles={(theme) => ({
         input: {
           minWidth: rem(125),
           borderColor: '#9379a7',
           borderWidth: rem(1),
-          color: '#3C2052', 
+          color: '#3C2052',
           background: `linear-gradient(to right, #ece9f3, #ffffff)`,
           '&::placeholder': {
             color: '#3C2052',
-            opacity: 1, 
+            opacity: 1,
           },
           '&:hover': {
             borderColor: '#9379a7',
@@ -126,19 +133,33 @@ const CustomSelectField: React.FC<CustomSelectFieldProps> = ({
           borderRadius: rem(24),
           margin: `${rem(4)} 0`,
           color: theme.colors.dark[9],
-          '&[data-selected]': {
-            backgroundColor: '#D3D2E3',
+          position: 'relative', 
+          '&[data-hovered]': {
+            backgroundColor: '#3C2052',
             color: theme.colors.dark[9],
           },
-          '&[data-hovered]': {
+          '&[data-selected]': {
             backgroundColor: '#D3D2E3',
+            color: '#3C2052', 
+            paddingRight: rem(32),
+          },
+          '&[data-selected][data-hovered]': {
+            backgroundColor: '#C2C1D2',
+          },
+
+          '& .mantine-Select-checkIcon': { 
+            position: 'absolute',
+            right: rem(12),
+            top: '50%',
+            transform: 'translateY(-50%)',
+            color: '#3C2052', 
           },
         },
         groupLabel: {
-            color: '#3C2052',
-            fontWeight: 'bold',
-            paddingLeft: rem(16),
-        }
+          color: '#3C2052',
+          fontWeight: 'bold',
+          paddingLeft: rem(16),
+        },
       })}
       {...props}
     />
