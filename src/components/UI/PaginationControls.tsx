@@ -1,27 +1,5 @@
-import styled from '@emotion/styled';
-import { IconButton } from '@mui/material';
-import { ChevronLeft, ChevronRight, FirstPage, LastPage } from '@mui/icons-material';
-
-const PaginationContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 16px;
-  background: transparent;
-  border-radius: 8px;
-  margin-bottom: 16px;
-`;
-
-const PageInfo = styled.div`
-  font-size: 0.875rem;
-  color: #555;
-  font-weight: 500;
-`;
-
-const NavigationButtons = styled.div`
-  display: flex;
-  gap: 4px;
-`;
+import { Group, Text, ActionIcon } from '@mantine/core';
+import { IconChevronLeft, IconChevronRight, IconPlayerSkipBack, IconPlayerSkipForward } from '@tabler/icons-react';
 
 interface PaginationControlsProps {
   currentPage: number;
@@ -41,48 +19,52 @@ export const PaginationControls = ({
   const totalPages = Math.ceil(totalItems / pageSize);
 
   return (
-    <PaginationContainer>
-      <PageInfo>
+    <Group justify="space-between" p="md" mb="md">
+      <Text size="sm" c="dimmed" fw={500}>
         Página {currentPage} de {totalPages} • {totalItems} incidencias
-      </PageInfo>
+      </Text>
       
-      <NavigationButtons>
-        <IconButton 
+      <Group gap={4}>
+        <ActionIcon 
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1}
-          size="small"
+          size="sm"
+          variant="subtle"
           aria-label="Primera página"
         >
-          <FirstPage fontSize="small" />
-        </IconButton>
+          <IconPlayerSkipBack size={16} />
+        </ActionIcon>
         
-        <IconButton 
+        <ActionIcon 
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          size="small"
+          size="sm"
+          variant="subtle"
           aria-label="Página anterior"
         >
-          <ChevronLeft fontSize="small" />
-        </IconButton>
+          <IconChevronLeft size={16} />
+        </ActionIcon>
         
-        <IconButton 
+        <ActionIcon 
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages || isLast}
-          size="small"
+          size="sm"
+          variant="subtle"
           aria-label="Página siguiente"
         >
-          <ChevronRight fontSize="small" />
-        </IconButton>
+          <IconChevronRight size={16} />
+        </ActionIcon>
         
-        <IconButton 
+        <ActionIcon 
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages || isLast}
-          size="small"
+          size="sm"
+          variant="subtle"
           aria-label="Última página"
         >
-          <LastPage fontSize="small" />
-        </IconButton>
-      </NavigationButtons>
-    </PaginationContainer>
+          <IconPlayerSkipForward size={16} />
+        </ActionIcon>
+      </Group>
+    </Group>
   );
 };
