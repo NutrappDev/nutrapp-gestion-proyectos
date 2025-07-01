@@ -13,7 +13,8 @@ export const TEAM_DEVELOPMENT_MEMBERS = [
   'richard medina', 
   'isabel Gomez', 
   'maría alejandra pedraza cárdenas', 
-  'david sarmiento'
+  'david sarmiento',
+  'Elver Rodriguez'
 ];
 
 export const TEAM_DESIGN_MEMBERS = [

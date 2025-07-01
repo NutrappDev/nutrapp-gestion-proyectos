@@ -1,0 +1,34 @@
+.notfound-bg {
+  min-height: 100vh;
+  width: 100vw;
+  background-color: #f8f9fa;
+  background-image: radial-gradient(#ccc 1px, transparent 1px), radial-gradient(#ccc 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+}
+
+.notfound-404 {
+  font-size: 8rem;
+  font-weight: bold;
+  margin: 0;
+  background: linear-gradient(90deg, #3b277d, #6a408c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.notfound-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #3c2052;
+  text-align: center;
+}
+
+.notfound-message {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  color: #5e6c84;
+  max-width: 600px;
+  text-align: center;
+} 

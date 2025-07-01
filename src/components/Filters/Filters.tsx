@@ -26,7 +26,7 @@ export const Filters = ({
 
   const formatAssigneeToItem = (assigneeName: string) => ({
     value: assigneeName.toUpperCase(),
-    label: assigneeName,
+    label: assigneeName.toUpperCase(),
   });
 
   const assigneeOptions = useMemo(() => {

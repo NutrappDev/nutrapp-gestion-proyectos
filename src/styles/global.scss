@@ -61,6 +61,11 @@ button:focus, button:focus-visible{
   color: #201d24;
 }
 
+.mantine-Avatar-root span{
+  font-size: 1rem;
+  font-weight: 600;
+}
+
 // Scroll personalizado
 ::-webkit-scrollbar {
   width: 10px;
