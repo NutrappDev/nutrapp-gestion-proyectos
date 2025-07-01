@@ -1,22 +1,6 @@
 import React from 'react';
-import styled from '@emotion/styled';
-import { Box } from '@mui/material';
+import { Box, Text } from '@mantine/core';
 import type { JiraComment, JiraDocContent } from '@/types/jira';
-
-const Paragraph = styled.p`
-  margin-bottom: 8px; 
-  &:last-child {
-    margin-bottom: 0;
-  }
-`;
-
-const Mention = styled.span`
-  color: #0052cc;
-  background-color: #e6fcff;
-  padding: 2px 4px;
-  border-radius: 3px;
-  font-weight: 500;
-`;
 
 interface JiraCommentRendererProps {
   comment: JiraComment;
@@ -31,14 +15,26 @@ export const JiraCommentRenderer: React.FC<JiraCommentRendererProps> = ({ commen
     return content.map((node, index) => {
       switch (node.type) {
         case 'paragraph':
-          return <Paragraph key={index}>{node.content && renderContent(node.content)}</Paragraph>;
+          return (
+            <Text key={index} size="sm" mb={4} style={{ display: 'block' }}>
+              {node.content && renderContent(node.content)}
+            </Text>
+          );
         case 'text':
           return <React.Fragment key={index}>{node.text || ''}</React.Fragment>;
         case 'mention':
           return (
-            <Mention key={index}>
+            <Text
+              key={index}
+              span
+              c="#0052cc"
+              bg="#e6fcff"
+              px={4}
+              py={2}
+              style={{ borderRadius: 3, fontWeight: 500 }}
+            >
               {node.attrs?.text || `@user-${node.attrs?.id || 'unknown'}`}
-            </Mention>
+            </Text>
           );
         default:
           console.warn(`Tipo de nodo de comentario de Jira no manejado: ${node.type}`);
@@ -48,4 +44,4 @@ export const JiraCommentRenderer: React.FC<JiraCommentRendererProps> = ({ commen
   };
 
   return <Box>{renderContent(comment.content)}</Box>;
-};
+}; 

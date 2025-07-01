@@ -1,79 +1,10 @@
-import { Box, Typography } from '@mui/material';
-import styled from '@emotion/styled';
+import { Box, Text } from '@mantine/core';
+import styles from './PriorityIcon.module.scss';
 
 interface PriorityIconProps {
   priority: string;
   showPriorityBar?: boolean;
 }
-
-const PriorityContainer = styled(Box)<{ priority: string }>`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-  border-radius: 12px;
-  background-color: ${props => {
-    switch (props.priority.toLowerCase()) {
-      case 'muy alta':
-        return '#FFF1F2';
-      case 'alta':
-        return '#FFF3E0';
-      case 'normal':
-        return '#E8F5E9';
-      default:
-        return '#F5F5F5';
-    }
-  }};
-`;
-
-const PriorityDot = styled(Box)<{ priority: string }>`
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: ${props => {
-    switch (props.priority.toLowerCase()) {
-      case 'muy alta':
-        return '#FF3A55';
-      case 'alta':
-        return '#FF9800';
-      case 'normal':
-        return '#4CAF50';
-      default:
-        return '#9E9E9E';
-    }
-  }};
-`;
-
-const PriorityText = styled(Typography)<{ priority: string }>`
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: ${props => {
-    switch (props.priority.toLowerCase()) {
-      case 'muy alta':
-        return '#FF3A55';
-      case 'alta':
-        return '#FF9800';
-      case 'normal':
-        return '#4CAF50';
-      default:
-        return '#9E9E9E';
-    }
-  }};
-`;
-
-const PriorityBarContainer = styled.div`
-  display: flex;
-  height: 4px;
-  width: 100%;
-  border-radius: 2px;
-  overflow: hidden;
-  margin-bottom: 8px;
-`;
-
-const PriorityBar = styled.div<{ $priorityColor: string }>`
-  flex: 1;
-  background-color: ${props => props.$priorityColor};
-`;
 
 const PRIORITY_COLORS = {
   normal: '#5fd79b',
@@ -100,20 +31,17 @@ export const PriorityIcon = ({ priority, showPriorityBar = false }: PriorityIcon
   return (
     <>
       {showPriorityBar && priorityLevels.length > 0 ? (
-        <PriorityBarContainer>
+        <div className={styles.priorityBarContainer}>
           {priorityLevels.map((level, index) => (
-            <PriorityBar key={index} $priorityColor={PRIORITY_COLORS[level]} />
+            <div key={index} className={styles.priorityBar} style={{ backgroundColor: PRIORITY_COLORS[level] }} />
           ))}
-        </PriorityBarContainer>
-      ): 
-      <PriorityContainer priority={priority}>
-        <PriorityDot priority={priority} />
-        <PriorityText priority={priority}>
-          {priority}
-        </PriorityText>
-      </PriorityContainer>
-      }
-      
+        </div>
+      ) : (
+        <Box className={styles.priorityContainer} data-priority={priority.toLowerCase()}>
+          <Box className={styles.priorityDot} data-priority={priority.toLowerCase()} />
+          <Text fw={700} size="xs" className={styles.priorityText} data-priority={priority.toLowerCase()}>{priority}</Text>
+        </Box>
+      )}
     </>
   );
 };

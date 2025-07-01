@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Avatar, Typography, Box, Tooltip } from '@mui/material';
-import styled from '@emotion/styled';
+import { Avatar, Box, Text, Tooltip } from '@mantine/core';
 import { UserIssueCountsByCategory } from '@/utils/issueUtils';
 import { useFiltersContext } from '@/context/FiltersContext';
 import { findTeamByAssignee, TEAMS } from '@/constants/team';
@@ -25,131 +24,6 @@ function getAvatarColor(name: string) {
   return avatarColors[index];
 }
 
-const CardContainer = styled(Box)<{ $selected?: boolean }>`
- display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 8px;
-  padding: 8px;
-  border-radius: 16px;
-  width: 8.5rem;
-  flex-shrink: 0;
-  background-color: #ffffff;
-  scroll-snap-align: center;
-  background: linear-gradient(309deg, #ffffff, #f6f3fa);
-  border: 2px solid ${({ $selected }) => ($selected ? '#3f3ead' : '#eae9eba1')};
-  box-shadow: ${({ $selected }) =>
-    $selected
-      ? '0px 8px 16px 0px #3f3ead33, 0px 0px 2px 0px #3f3ead99'
-      : '0px 4px 12px rgb(150 141 161 / 22%), -4px -4px 4px #ffff'};
-  transition: transform 0.3s ease-in-out, box-shadow 0.2s ease-in-out;
-  animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: visible;
-  z-index: 10;
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(15px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  &:hover {
-    transform: translateY(-2px); 
-    box-shadow: 0px 8px 16px 0px #3f3ead33;
-  }
-`;
-
-const CardWrapper = styled(Box)<{ $selected?: boolean }>`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 8px;
-  width: 8.5rem;
-  flex-shrink: 0;
-  scroll-snap-align: center;
-`;
-
-const FlipContainer = styled(Box)`
-  width: 2.7rem;
-  height: 2.7rem;
-  margin-bottom: 8px;
-  position: relative;
-  perspective: 1000px;
-  cursor: pointer;
-`;
-
-const FlipCardInner = styled(Box)<{ isFlipped: boolean }>`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  transition: transform 0.6s;
-  transform-style: preserve-3d;
-  transform: ${props => props.isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'};
-`;
-
-const FlipCardFace = styled(Box)`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
-`;
-
-const FlipCardBack = styled(FlipCardFace)`
-  background-color: #3f3ead;
-  color: white;
-  font-size: 1rem;
-  font-weight: bold;
-  transform: rotateY(180deg);
-`;
-
-const StyledAvatar = styled(Avatar)<{ bgcolor?: string }>`
-  width: 100%;
-  height: 100%;
-  background-color: ${({ bgcolor }) => bgcolor || '#e0e0e0'};
-`;
-
-interface CountCircleProps {
-  backgroundColor: string;
-}
-
-const CountCircle = styled(Box)<CountCircleProps>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background-color: ${props => props.backgroundColor};
-  color: white;
-  font-weight: bold;
-  font-size: 0.75rem;
-  margin: 2px;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const CountsRow = styled(Box)`
-  display: flex;
-  justify-content: center;
-  margin-top: 8px;
-  padding: 0.3rem;
-  border-radius: 1rem;
-  background-color: #e7ebf8cf;
-`;
-
 export const SummaryCard: React.FC<UserAvatarCardProps> = ({ name, avatarUrl, initials, counts, selected = false }) => {
   const { filters, updateFilter } = useFiltersContext(); 
   const [isFlipped, setIsFlipped] = useState(false);
@@ -160,10 +34,8 @@ export const SummaryCard: React.FC<UserAvatarCardProps> = ({ name, avatarUrl, in
     detained: '#ff3a55e6',
   };
 
-  
   const handleClick = () => {
     const isCurrentlyShowingTeams = !filters.teamId && !filters.assignee;
-
     if (isCurrentlyShowingTeams) {
       const clickedTeam = TEAMS.find(team => team.name === name);
       if (clickedTeam) {
@@ -187,56 +59,167 @@ export const SummaryCard: React.FC<UserAvatarCardProps> = ({ name, avatarUrl, in
   };
 
   return (
-    <CardWrapper $selected={selected}>
-      <CardContainer $selected={selected}>
-        <Typography variant="body2" align="center" noWrap sx={{ 
-          width: '100%', 
-          fontSize: '0.7rem',
-          color: '#948a9b',
-          fontWeight: 'bold',
-          marginBottom: '4px'
-        }}>
-          {name.split(' ')[0]}
-        </Typography>
-        <Tooltip title={name} arrow placement="top">
-          <FlipContainer
-            onClick={handleClick}
-            onMouseEnter={() => setIsFlipped(true)}
-            onMouseLeave={() => setIsFlipped(false)}
+    <Box
+      pos="relative"
+      m={8}
+      w={136}
+      p={8}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        borderRadius: 16,
+        flexShrink: 0,
+        scrollSnapAlign: 'center',
+        background: 'linear-gradient(309deg, #ffffff, #f6f3fa)',
+        border: `2px solid ${selected ? '#3f3ead' : '#eae9eba1'}`,
+        boxShadow: selected
+          ? '0px 8px 16px 0px #3f3ead33, 0px 0px 2px 0px #3f3ead99'
+          : '0px 4px 12px rgb(150 141 161 / 22%), -4px -4px 4px #ffff',
+        transition: 'transform 0.3s, box-shadow 0.2s',
+        animation: 'fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        overflow: 'visible',
+        zIndex: 10,
+      }}
+      onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)')}
+      onMouseLeave={e => (e.currentTarget.style.transform = '')}
+    >
+      <Text ta="center" fz={11} fw={700} c="#948a9b" mb={4} truncate>
+        {name.split(' ')[0]}
+      </Text>
+      <Tooltip label={name} withArrow position="top">
+        <Box
+          w={43}
+          h={43}
+          mb={8}
+          pos="relative"
+          style={{ perspective: 1000, cursor: 'pointer' }}
+          onClick={handleClick}
+          onMouseEnter={() => setIsFlipped(true)}
+          onMouseLeave={() => setIsFlipped(false)}
+        >
+          <Box
+            style={{
+              position: 'relative',
+              width: '100%',
+              height: '100%',
+              textAlign: 'center',
+              transition: 'transform 0.6s',
+              transformStyle: 'preserve-3d',
+              transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+            }}
           >
-            <FlipCardInner isFlipped={isFlipped}>
-              <FlipCardFace>
-                <StyledAvatar
-                  alt={name}
-                  src={avatarUrl || undefined}
-                  bgcolor={!avatarUrl ? getAvatarColor(name) : undefined}
-                >
-                  {initials}
-                </StyledAvatar>
-              </FlipCardFace>
-
-              <FlipCardBack>
-                {counts.total- counts.awaitingApproval}
-              </FlipCardBack>
-            </FlipCardInner>
-          </FlipContainer>
-        </Tooltip>
-        
-        <CountsRow>
-          <CountCircle backgroundColor={colors.backlog}>
-            {counts.backlog}
-          </CountCircle>
-
-          <CountCircle backgroundColor={colors.inProgress}>
-            {counts.inProgress}
-          </CountCircle>
-
-          <CountCircle backgroundColor={colors.detained}>
-            {counts.detained}
-          </CountCircle>
-
-        </CountsRow>
-      </CardContainer>
-    </CardWrapper>
+            <Box
+              style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                backfaceVisibility: 'hidden',
+                borderRadius: '50%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                boxShadow: '0px 2px 6px rgba(0,0,0,0.05)',
+              }}
+            >
+              <Avatar
+                alt={name}
+                src={avatarUrl || undefined}
+                size={43}
+                color='#ffffff'
+                style={{ fontSize:'0.8rem', backgroundColor: !avatarUrl ? getAvatarColor(name) : undefined }}
+              >
+                {initials}
+              </Avatar>
+            </Box>
+            {/* Back */}
+            <Box
+              style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                backfaceVisibility: 'hidden',
+                borderRadius: '50%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                background: '#3f3ead',
+                color: 'white',
+                fontSize: '1rem',
+                fontWeight: 'bold',
+                transform: 'rotateY(180deg)',
+              }}
+            >
+              {counts.total - counts.awaitingApproval}
+            </Box>
+          </Box>
+        </Box>
+      </Tooltip>
+      <Box
+        mt={8}
+        p={4}
+        style={{ 
+          display: 'flex',
+          justifyContent: 'center',
+          borderRadius: 16, 
+          background: '#e7ebf8cf' 
+        }}
+      >
+        <Box
+          w={24}
+          h={24}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: '50%',
+            background: colors.backlog,
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: '0.75rem',
+            margin: 2,
+            boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
+          }}
+        >
+          {counts.backlog}
+        </Box>
+        <Box
+          w={24}
+          h={24}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: '50%',
+            background: colors.inProgress,
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: '0.75rem',
+            margin: 2,
+            boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
+          }}
+        >
+          {counts.inProgress}
+        </Box>
+        <Box
+          w={24}
+          h={24}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: '50%',
+            background: colors.detained,
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: '0.75rem',
+            margin: 2,
+            boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
+          }}
+        >
+          {counts.detained}
+        </Box>
+      </Box>
+    </Box>
   );
 };

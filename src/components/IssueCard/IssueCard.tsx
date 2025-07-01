@@ -3,7 +3,7 @@ import type { JiraIssue } from '@/types/jira';
 import { Paper, Box, Avatar, Text, Group, ActionIcon, Collapse } from '@mantine/core';
 import { PriorityIcon } from './PriorityIcon';
 import { useState } from 'react';
-import { JiraCommentRenderer } from '../UI/JiraCommentRenderer';
+import { JiraCommentRenderer } from './JiraCommentRenderer';
 import { useFiltersContext } from '@/context/FiltersContext';
 import classes from './IssueCard.module.scss';
 import { ReporterInfo } from './ReporterInfo';
@@ -141,7 +141,7 @@ export const IssueCard = ({ issue }: IssueCardProps) => {
         {issue.lastComment && (
           <Collapse in={showComment}>
             <Box className={classes.commentContainer}>
-              <Group justify="space-between" className={classes.commentHeader}>
+              <Group justify="space-between" mb={8} className={classes.commentHeader}>
                 <Text size="xs">{issue.lastComment.author?.name || 'anonymus'}</Text>
                 <Text size="xs">
                   {issue.lastComment.created ? new Date(issue.lastComment.created).toLocaleDateString() : ''}
