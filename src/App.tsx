@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Dashboard } from './pages/Dashboard/Dashboard';
 import { FiltersProvider } from './context/FiltersContext';
-import { NotFound } from './pages/NotFound';
+import { NotFound } from './pages/NotFound/NotFound';
 import './styles/global.scss';
 import { MantineProvider } from '@mantine/core';
 
