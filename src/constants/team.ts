@@ -7,7 +7,7 @@ export interface Team {
 }
 
 export const TEAM_DEVELOPMENT_MEMBERS = [
-  'camilo bastidas', 
+  // 'camilo bastidas', 
   'mario eraso', 
   'kevin aguilera',
   'richard medina', 
