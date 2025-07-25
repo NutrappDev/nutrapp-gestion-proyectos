@@ -7,14 +7,14 @@ export interface Team {
 }
 
 export const TEAM_DEVELOPMENT_MEMBERS = [
-  // 'camilo bastidas', 
   'mario eraso', 
   'kevin aguilera',
   'richard medina', 
   'isabel Gomez', 
   'maría alejandra pedraza cárdenas', 
   'david sarmiento',
-  'Elver Rodriguez'
+  'Fabián Mauricio Romero Lugo',
+  'JORGE EDUARDO GARAY GUTIERREZ'
 ];
 
 export const TEAM_DESIGN_MEMBERS = [
