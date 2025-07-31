@@ -14,7 +14,8 @@ export const TEAM_DEVELOPMENT_MEMBERS = [
   'maría alejandra pedraza cárdenas', 
   'david sarmiento',
   'Fabián Mauricio Romero Lugo',
-  'JORGE EDUARDO GARAY GUTIERREZ'
+  'JORGE EDUARDO GARAY GUTIERREZ',
+  'Daniel Enoc Amaya Amaya'
 ];
 
 export const TEAM_DESIGN_MEMBERS = [
