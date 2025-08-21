@@ -33,12 +33,6 @@ export const IssueCard = ({ issue }: IssueCardProps) => {
     ? `${issue.duedate.slice(8, 10)}/${issue.duedate.slice(5, 7)}`
     : 'Sin fecha';
 
-  const handleAssigneeClick = () => {
-    if (issue.assignee?.name) {
-      updateFilter('assignee', issue.assignee.name);
-    }
-  };
-
     const handleAssigneeClickv2 = () => {
       console.log('dadadada')
       const isCurrentlyShowingTeams = !filters.teamId && !filters.assignee;
