@@ -50,6 +50,7 @@ export interface FetchIssuesResponse {
     {
       issues: JiraIssue[];
       total: number;
+      nextPageToken?: string;
     }
   >;
   total: number;
@@ -81,12 +82,12 @@ export const fetchIssues = async (params: FetchIssuesParams): Promise<FetchIssue
 };
 
 export const fetchUsers = async (): Promise<JiraUsers[]> => {
-  const response = await jiraApiClient.get<JiraUsers[]>('/issues/users');
+  const response = await jiraApiClient.get<JiraUsers[]>('/users');
   return response.data;
 };
 
 export const fetchProjects = async (): Promise<JiraProject[]> => {
-  const response = await jiraApiClient.get<JiraProject[]>('/issues/projects');
+  const response = await jiraApiClient.get<JiraProject[]>('/projects');
   return response.data;
 };
 
@@ -101,6 +102,6 @@ export const fetchAssigneesWithStats = async (
     queryParams.append('assignee', assignees);
   }
 
-  const response = await jiraApiClient.get('/issues/users-with-stats', { params: queryParams });
+  const response = await jiraApiClient.get('/users-with-stats', { params: queryParams });
   return response.data.data;
 };

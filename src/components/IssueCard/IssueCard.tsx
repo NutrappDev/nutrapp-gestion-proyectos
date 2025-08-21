@@ -7,6 +7,7 @@ import { JiraCommentRenderer } from './JiraCommentRenderer';
 import { useFiltersContext } from '@/context/FiltersContext';
 import classes from './IssueCard.module.scss';
 import { ReporterInfo } from './ReporterInfo';
+import { findTeamByAssignee, TEAMS } from '@/constants/team';
 
 interface IssueCardProps {
   issue: JiraIssue;
@@ -22,7 +23,7 @@ const stringToColor = (str: string) => {
 };
 
 export const IssueCard = ({ issue }: IssueCardProps) => {
-  const { updateFilter } = useFiltersContext();
+  const { filters, updateFilter } = useFiltersContext(); 
   const [showComment, setShowComment] = useState(false);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
   const initials = issue.assignee?.initials || 'NA';
@@ -37,6 +38,31 @@ export const IssueCard = ({ issue }: IssueCardProps) => {
       updateFilter('assignee', issue.assignee.name);
     }
   };
+
+    const handleAssigneeClickv2 = () => {
+      console.log('dadadada')
+      const isCurrentlyShowingTeams = !filters.teamId && !filters.assignee;
+      if (isCurrentlyShowingTeams) {
+        const clickedTeam = TEAMS.find(team => team.name === issue.assignee?.name);
+        if (clickedTeam) {
+          updateFilter('teamId', clickedTeam.id);
+          updateFilter('assignee', undefined);
+        } else {
+          console.warn("Clicked on a user card when in 'all teams' mode. Ignoring.");
+          updateFilter('assignee', issue.assignee?.name);
+          updateFilter('teamId', undefined);
+        }
+      } else {
+        if (filters.assignee === issue.assignee?.name) {
+          updateFilter('assignee', undefined);
+          updateFilter('teamId', undefined);
+        } else {
+          updateFilter('assignee', issue.assignee?.name);
+          const team = findTeamByAssignee(issue.assignee?.name || '');
+          updateFilter('teamId', team ? team.id : undefined);
+        }
+      }
+    };
 
   return (
     <Paper unstyled className={classes.card} radius={24}>
@@ -79,13 +105,13 @@ export const IssueCard = ({ issue }: IssueCardProps) => {
                 size={30}
                 radius="xl"
                 className={classes.avatar}
-                onClick={handleAssigneeClick}
+                onClick={handleAssigneeClickv2}
               />
             ) : (
               <Box 
                 className={classes.avatarFallback}
                 bg={bgColor}
-                onClick={handleAssigneeClick}
+                onClick={handleAssigneeClickv2}
               >
                 {initials}
               </Box>
