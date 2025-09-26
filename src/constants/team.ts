@@ -15,7 +15,7 @@ export const TEAM_DEVELOPMENT_MEMBERS = [
   'david sarmiento',
   'Fabián Mauricio Romero Lugo',
   'JORGE EDUARDO GARAY GUTIERREZ',
-  'Daniel Enoc Amaya Amaya'
+  'Jhelcy Sandoval'
 ];
 
 export const TEAM_DESIGN_MEMBERS = [
