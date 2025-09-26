@@ -76,6 +76,11 @@ export interface JiraDocAttrs {
   id?: string;
   text?: string;
   accessLevel?: string;
+  collection?: string;
+  url?: string
+  level?: number;
+  alt?: string;
+  type?: string;
 }
 
 export interface JiraDocContent {

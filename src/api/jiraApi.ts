@@ -105,3 +105,13 @@ export const fetchAssigneesWithStats = async (
   const response = await jiraApiClient.get('/users-with-stats', { params: queryParams });
   return response.data.data;
 };
+
+export const updateStatusIssue = async (issueId: string, newStatus: string): Promise<JiraIssue> => {
+  const response = await jiraApiClient.put<JiraIssue>(`/issues/${issueId}`,{ status: newStatus })
+  return response.data;
+};
+
+export const addCommentToIssues = async (issueId: string, message: string): Promise<string> => {
+  const response = await jiraApiClient.post(`/issues/${issueId}/comment`,{ message})
+  return response.data;
+}
