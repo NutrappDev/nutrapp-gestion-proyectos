@@ -70,8 +70,10 @@ const ProtectedTemplate = ({ children }: { children: React.ReactNode }) => {
           pt-14 sm:pt-0
           bg-background
         ">
-          <div className="h-full p-4 sm:p-6">
-            {children}
+          <div className="h-full p-0 sm:p-6">
+            <div className="bg-surface p-4 sm:p-6 rounded-lg">
+              {children}
+            </div>
           </div>
         </main>
       </div>

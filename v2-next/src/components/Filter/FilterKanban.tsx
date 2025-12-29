@@ -1,6 +1,6 @@
 'use client';
 
-import { IconTimeline, IconLayoutKanban } from '@tabler/icons-react';
+import { IconTimeline, IconLayoutKanban, IconClearAll, IconRefresh } from '@tabler/icons-react';
 
 interface FilterKanbanProps {
   teams: {
@@ -36,6 +36,14 @@ export const FilterKanban = ({
     { value: 'waiting-approval', label: 'Esperando aprobación' },
     { value: 'blocked', label: 'Detenida' },
   ];
+
+  const handleClear = () => {
+    onChange({
+      teamId: 'all',
+      assigned: 'all',
+      status: 'all',
+    });
+  };
 
   return (
     <div
@@ -88,7 +96,7 @@ export const FilterKanban = ({
               <option key={team.id} value={team.id}>
                 {team.label || team.name}
               </option>
-            ))}   
+            ))}
           </select>
         </div>
 
@@ -124,6 +132,25 @@ export const FilterKanban = ({
               </option>
             ))}
           </select>
+        </div>
+        <div className="my-2 py-2 flex items-center px-4">
+          <button
+            onClick={handleClear}
+            className="
+            flex items-center gap-2
+            rounded-full
+            bg-primary
+            px-3 py-2
+            text-white text-xs font-semibold
+            transition
+            hover:opacity-90
+            active:scale-95
+            cursor-pointer
+          "
+          >
+            <IconRefresh size={16} />
+            Limpiar
+          </button>
         </div>
       </div>
     </div>

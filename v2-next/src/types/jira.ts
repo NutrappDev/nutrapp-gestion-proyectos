@@ -8,6 +8,7 @@ export interface JiraUsers {
   name: string; 
   accountId: any; 
   avatarUrls: { [x: string]: any;}
+  accountType: string;
 }
 
 export interface JiraIssue {
@@ -26,6 +27,7 @@ export interface JiraIssue {
   url: string;
   reporter: JiraAssignee | null;
   lastComment?: JiraComment;
+  fields:any
 }
 
 export type StatusCategory = 'Por hacer' | 'En curso' | 'Listo';
@@ -46,6 +48,9 @@ export interface JiraProject {
     accountId: string;
     displayName: string;
   } | null;
+  color:string;
+  startDate:string;
+  endDate: string
 }
 
 export interface ParsedJiraIssue {
@@ -84,3 +89,5 @@ export interface JiraDocContent {
   text?: string;
   attrs?: JiraDocAttrs;
 }
+
+export interface FetchIssuesParams { status?: string | string[]; project?: string; assignee?: string | string[]; page?: number; pageSize?: number; }

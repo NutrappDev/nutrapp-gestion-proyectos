@@ -1,7 +1,14 @@
-'use client'
+'use client';
 
-import { usePathname, useRouter } from "next/navigation";
-import { ReactNode, createContext, useContext, useEffect, useState } from "react";
+import axios from 'axios';
+import { usePathname, useRouter } from 'next/navigation';
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -12,60 +19,79 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
+      const { data } = await api.post('/auth/login', {
+        email,
+        password,
+      });
+
+      localStorage.setItem('token', data.access_token);
       setIsAuthenticated(true);
+      router.push('/home');
     } catch (error) {
-      console.error("Error en login", error);
+      console.error('Error en login', error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
   const logout = () => {
+    localStorage.removeItem('token');
     setIsAuthenticated(false);
     router.push('/');
   };
 
   useEffect(() => {
-    console.log('Estado de autenticación:', {
-      isAuthenticated,
-      usuario: 'luna',
-      rol: 'admin',
-      ruta: pathname,
-    });
+    const token = localStorage.getItem('token');
+    setIsAuthenticated(!!token);
+    setIsLoading(false);
+  }, []);
+
+ 
+  useEffect(() => {
+    if (isLoading) return;
 
     const publicRoutes = ['/'];
     const isPublicRoute = publicRoutes.includes(pathname);
 
     if (!isPublicRoute && !isAuthenticated) {
-      console.log(
-        `Redirigiendo a login: Usuario no autenticado intentando acceder a ${pathname}`
-      );
       router.push('/');
-    } else if (isAuthenticated && isPublicRoute && pathname === '/') {
-      console.log('Redirigiendo a home: Usuario ya autenticado');
+    }
+
+    if (isAuthenticated && pathname === '/') {
       router.push('/home');
-    } 
+    }
+  }, [pathname, isAuthenticated, isLoading, router]);
 
-  }, [pathname, router, isAuthenticated]);
-
-  const value = {
-    isAuthenticated,
-    isLoading,
-    login,
-    logout,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        isLoading,
+        login,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

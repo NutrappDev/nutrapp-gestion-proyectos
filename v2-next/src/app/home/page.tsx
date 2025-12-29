@@ -1,7 +1,7 @@
 'use client';
 
 import { useTeams } from "@/hook/useTeams";
-import Card from "@/components/cards";
+import Card from "@/components/cardsIssues";
 import { useState, useRef } from "react";
 import { KanbanColumn } from "@/components/Kanban/KanbanColumn";
 import { FilterKanban } from "@/components/Filter/FilterKanban";
@@ -28,10 +28,9 @@ export default function HomePage() {
         <h1 className="text-2xl font-semibold text-foreground mb-4">
           Home
         </h1>
-
         <div
           ref={containerRef}
-          className="flex justify-center gap-4 flex-wrap mb-4"
+          className="flex justify-center gap-2 sm:gap-4 flex-wrap mb-4"
         >
           {teams.map(team => (
             <Card
@@ -61,7 +60,7 @@ export default function HomePage() {
         />
       </div>
 
-      <div className="flex-1 min-h-[100%] sm:min-h-[80%] mt-4">
+      <div className="flex-1 h-full  p-4 bg-background">
         {view === 'timeline' ? (
           <div className="h-full bg-surface rounded-lg p-6 shadow border border-border">
             timeline
