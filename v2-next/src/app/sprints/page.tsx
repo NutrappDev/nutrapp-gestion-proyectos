@@ -1,6 +1,6 @@
 'use client';
 
-import CardProjects from "@/components/cardsProjects";
+import CardProjects from "@/components/Cards/cardsProjects";
 import { FilterProjects } from "@/components/Filter/FilterProjects";
 import { FilterUptimer } from "@/components/Filter/FilterUptimer";
 import { KanbanColumnSprint } from "@/components/Kanban/KanbanColumnSprint";

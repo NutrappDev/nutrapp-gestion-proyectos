@@ -2,45 +2,54 @@ export interface Team {
   id: string;
   name: string;
   label: string;
-  members: string[];
-  initials: string; 
+  members: Member[];
+  initials: string;
   color: string;
 }
 
+export interface Member {
+  name?: string;
+  accountId?: any;
+  avatarUrls?: { [x: string]: any; }
+  accountType?: string;
+  displayName: string;
+  email?: string;
+}
+
 export const TEAM_DEVELOPMENT_MEMBERS = [
-  'mario eraso', 
-  'kevin aguilera',
-  'richard medina', 
-  'isabel Gomez', 
-  'maría alejandra pedraza cárdenas', 
-  'david sarmiento',
-  'Fabián Mauricio Romero Lugo',
-  'JORGE EDUARDO GARAY GUTIERREZ',
-  'Jhelcy Sandoval',
-  'Sebastian Andres Alvarez Lambertinez'
+  { displayName: 'mario eraso' },
+  { displayName: 'kevin aguilera' },
+  { displayName: 'richard medina' },
+  { displayName: 'isabel Gomez' },
+  { displayName: 'maría alejandra pedraza cárdenas' },
+  { displayName: 'david sarmiento' },
+  { displayName: 'Fabián Mauricio Romero Lugo' },
+  { displayName: 'JORGE EDUARDO GARAY GUTIERREZ' },
+  { displayName: 'Jhelcy Sandoval' },
+  { displayName: 'Sebastian Andres Alvarez Lambertinez' }
 ];
 
 export const TEAM_DESIGN_MEMBERS = [
-  'Cristhian Camilo Ruiz Segura',
-  'Emily Alzate Garcia',
-  'Francisco  Aguirre Tovar'
+  { displayName: 'Cristhian Camilo Ruiz Segura' },
+  { displayName: 'Emily Alzate Garcia' },
+  { displayName: 'Francisco  Aguirre Tovar' }
 ];
 
 export const TEAM_OPERATIONS_MEMBERS = [
-  'Richard Enrique Torres Pinzón', 
-  'Miller Ladino Osorio',
-  'Juan Medina',
-  'Evelyn Herreño',
-  'Yefer Enrique García Moncada', 
-  'Michelle Carolina Castro Muñoz',
-  'David Alberto Espitia Quiceno',
-  'Dannerys Gomez Polanco',
-  'Mesa de ayuda Nutrapp'
+  { displayName: 'Richard Enrique Torres Pinzón' },
+  { displayName: 'Miller Ladino Osorio' },
+  { displayName: 'Juan Medina' },
+  { displayName: 'Evelyn Herreño' },
+  { displayName: 'Yefer Enrique García Moncada' },
+  { displayName: 'Michelle Carolina Castro Muñoz' },
+  { displayName: 'David Alberto Espitia Quiceno' },
+  { displayName: 'Dannerys Gomez Polanco' },
+  { displayName: 'Mesa de ayuda Nutrapp' }
 ];
 
 export const TEAM_INFRAESTRUCTURA_MEMBERS = [
-  'Juan David Muñoz Cavanzo',
-  'Isabel Gil'
+  { displayName: 'Juan David Muñoz Cavanzo' },
+  { displayName: 'Isabel Gil' }
 ]
 
 export const TEAMS: Team[] = [
@@ -78,11 +87,24 @@ export const TEAMS: Team[] = [
   }
 ];
 
-export const ALL_ASSIGNEES = [...TEAM_DEVELOPMENT_MEMBERS, ...TEAM_OPERATIONS_MEMBERS, ...TEAM_DESIGN_MEMBERS,...TEAM_INFRAESTRUCTURA_MEMBERS].sort((a, b) => a.localeCompare(b));
+export const ALL_ASSIGNEES: Member[] = [
+  ...TEAM_DEVELOPMENT_MEMBERS,
+  ...TEAM_OPERATIONS_MEMBERS,
+  ...TEAM_DESIGN_MEMBERS,
+  ...TEAM_INFRAESTRUCTURA_MEMBERS,
+].sort((a, b) =>
+  a.displayName.localeCompare(b.displayName)
+)
 
-export const findTeamByAssignee = (assigneeName: string): Team | undefined => {
-  const normalizedAssignee = assigneeName.trim().toLowerCase();
+export const findTeamByAssignee = (
+  assigneeName: string
+): Team | undefined => {
+  const normalized = assigneeName.trim().toLowerCase()
+
   return TEAMS.find(team =>
-    team.members.some(member => member.trim().toLowerCase() === normalizedAssignee)
-  );
-};
+    team.members.some(
+      member =>
+        member.displayName.trim().toLowerCase() === normalized
+    )
+  )
+}
