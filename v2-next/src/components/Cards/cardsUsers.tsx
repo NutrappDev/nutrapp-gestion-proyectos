@@ -25,7 +25,8 @@ export default function CardUsers({
         rounded-lg
         p-4
         w-full sm:min-w-[150px]
-        flex flex-col items-center gap-4
+        sm:max-w-[150px]
+        flex flex-col justify-between items-center gap-4
         hover:translate-y-2
         cursor-pointer
         text-truncate

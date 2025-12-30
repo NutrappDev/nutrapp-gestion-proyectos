@@ -46,7 +46,7 @@ export default function HomePage() {
 
         <div
           ref={containerRef}
-          className="flex p-2 justify-center w-full gap-2 sm:gap-4 flex-wrap sm:flex-nowrap mb-4 overflow-auto"
+          className="flex p-2 justify-center-safe w-full gap-2 sm:gap-4 flex-wrap sm:flex-nowrap mb-4 overflow-auto"
         >
           {filters.teamId === 'all' &&
             teams.map(team => (
@@ -95,7 +95,6 @@ export default function HomePage() {
             })}
         </div>
 
-        {/* BOTÓN VOLVER */}
         {filters.teamId !== 'all' && (
           <button
             className="mb-4 text-sm text-primary hover:underline"

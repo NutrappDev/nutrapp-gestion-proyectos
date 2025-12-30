@@ -8,7 +8,6 @@ export interface Team {
 }
 
 export interface Member {
-  name?: string;
   accountId?: any;
   avatarUrls?: { [x: string]: any; }
   accountType?: string;

@@ -4,6 +4,7 @@ import { IssuesCard } from "../Issues/IssuesCards"
 import { JiraIssue } from "@/types/jira"
 import { useMemo } from "react"
 import { findTeamByAssignee } from "@/types/team"
+import { formatDisplayName } from "@/utils/jira"
 
 interface ColumnData {
   status: JiraIssue[]
@@ -23,22 +24,13 @@ interface KanbanColumnProps {
   }
 }
 
-const normalizeName = (name: string): string =>
-  name.trim().toLowerCase()
-
 const getAssigneeName = (issue: JiraIssue): string | null =>
   issue.fields?.assignee?.displayName
-    ? normalizeName(issue.fields.assignee.displayName)
+    ? formatDisplayName(issue.fields.assignee.displayName)
     : null
 
-const getStatusName = (issue: JiraIssue): string =>
-  issue.fields?.status?.name ?? ""
-
-const getStatusCategory = (issue: JiraIssue): string =>
-  issue.fields?.status?.statusCategory?.name ?? ""
-
 const getStoryPoints = (issue: JiraIssue): number =>
-  Number(issue.fields?.customfield_10016) || 0
+  Number(issue.fields?.customfield_10297?.value) || 0
 
 export const KanbanColumn = ({ filters }: KanbanColumnProps) => {
   const { issuesByUser, isLoading, error } = useJira({ viewIssuesUsers: true })
@@ -57,33 +49,41 @@ export const KanbanColumn = ({ filters }: KanbanColumnProps) => {
   ]
 
   const filteredIssues = useMemo(() => {
-    return rawIssues.filter((issue) => {
+    return rawIssues.filter(issue => {
       const assigneeName = getAssigneeName(issue)
 
-      // Filtro por asignado
-      if (filters.assigned !== "all") {
-        if (filters.assigned === "assigned" && !assigneeName) return false
-        if (filters.assigned === "unassigned" && assigneeName) return false
+      if (filters.assigned !== 'all') {
+        if (filters.assigned === 'assigned' && !assigneeName) return false
+        if (filters.assigned === 'unassigned' && assigneeName) return false
+
+        if (
+          filters.assigned !== 'assigned' &&
+          filters.assigned !== 'unassigned'
+        ) {
+          if (!assigneeName) return false
+          if (assigneeName !== filters.assigned) return false
+        }
       }
 
-      // Filtro por equipo
-      if (filters.teamId !== "all") {
+      if (filters.teamId !== 'all') {
         if (!assigneeName) return false
         const team = findTeamByAssignee(assigneeName)
         if (!team || team.id !== filters.teamId) return false
       }
 
-      // Filtro por status
-      if (filters.status && filters.status !== "all") {
+      if (filters.status !== 'all') {
         const issueStatusName = issue.fields.status.name
-        if (filters.status === "pending" && !["Backlog", "Por hacer"].includes(issueStatusName)) return false
-        if (filters.status === "in-progress" && !["En proceso", "Revisión QA", "Esperando aprobación", "Detenido"].includes(issueStatusName)) return false
-        if (filters.status === "done" && issue.fields.status.statusCategory.key !== "done") return false
+
+        if (issueStatusName !== filters.status) {
+          return false
+        }
       }
+
 
       return true
     })
   }, [rawIssues, filters.assigned, filters.teamId, filters.status])
+
 
   const groupedIssues: GroupedIssues = useMemo(() => {
     const grouped: GroupedIssues = columns.reduce((acc, column) => {

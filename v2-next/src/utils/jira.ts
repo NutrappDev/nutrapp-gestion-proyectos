@@ -48,3 +48,30 @@ export const getEpicProgressByDoneIssues = (
 
   return Math.round(progress)
 }
+
+const capitalize = (word: string) =>
+  word.charAt(0).toUpperCase() + word.slice(1)
+
+export const formatDisplayName = (name: string): string => {
+  if (!name) return ''
+
+  const clean = name
+    .trim()
+    .split(/\s+/)
+    .map(part =>
+      part
+        .normalize('NFD')
+        .replace(/[\u0301\u0300\u0302\u0308]/g, '') 
+        .toLowerCase()
+    )
+
+  if (clean.length === 1) {
+    return capitalize(clean[0])
+  }
+
+  const firstName = clean[0]
+  const lastName = clean[clean.length - 1]
+
+  return `${capitalize(firstName)} ${capitalize(lastName)}`
+}
+

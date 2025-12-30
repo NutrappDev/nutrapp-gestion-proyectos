@@ -1,25 +1,34 @@
-'use client';
+'use client'
 
-import { IconTimeline, IconLayoutKanban, IconClearAll, IconRefresh } from '@tabler/icons-react';
+import { formatDisplayName } from '@/utils/jira'
+import {
+  IconTimeline,
+  IconLayoutKanban,
+  IconRefresh,
+} from '@tabler/icons-react'
 
 interface FilterKanbanProps {
   teams: {
-    id: string;
-    name: string;
-    label?: string;
-  }[];
+    id: string
+    name: string
+    label?: string
+    members?: {
+      displayName: string
+      accountId?: string
+    }[]
+  }[]
   value: {
-    teamId: string;
-    assigned: string;
-    status: string;
-  };
-  view: 'kanban' | 'timeline';
+    teamId: string
+    assigned: string
+    status: string
+  }
+  view: 'kanban' | 'timeline'
   onChange: (filters: {
-    teamId: string;
-    assigned: string;
-    status: string;
-  }) => void;
-  onViewChange: (view: 'kanban' | 'timeline') => void;
+    teamId: string
+    assigned: string
+    status: string
+  }) => void
+  onViewChange: (view: 'kanban' | 'timeline') => void
 }
 
 export const FilterKanban = ({
@@ -31,29 +40,31 @@ export const FilterKanban = ({
 }: FilterKanbanProps) => {
   const statusOptions = [
     { value: 'all', label: 'Todos los estados' },
-    { value: 'todo', label: 'Por hacer' },
-    { value: 'in-progress', label: 'En curso' },
-    { value: 'waiting-approval', label: 'Esperando aprobación' },
-    { value: 'blocked', label: 'Detenida' },
-  ];
+    { value: 'Backlog', label: 'Backlog' },
+    { value: 'Por hacer', label: 'Por hacer' },
+    { value: 'En proceso', label: 'En proceso' },
+    { value: 'Revisión QA', label: 'Revisión QA' },
+    { value: 'Detenido', label: 'Detenido' },
+  ]
+
+
+  const selectedTeam = teams.find(team => team.id === value.teamId)
 
   const handleClear = () => {
     onChange({
       teamId: 'all',
       assigned: 'all',
       status: 'all',
-    });
-  };
+    })
+  }
 
   return (
     <div
       className="
         sticky top-0 z-20
         bg-background
-        p-4
-        rounded-t-lg
-        shadow-sm
-        w-full
+        p-4 rounded-t-lg
+        shadow-sm w-full
         flex flex-col sm:flex-row
         justify-start sm:justify-between
         items-start sm:items-center
@@ -62,7 +73,7 @@ export const FilterKanban = ({
     >
       <div className="flex gap-2 w-full sm:w-auto">
         <button
-          className={`bg-surface p-2 flex gap-2 rounded cursor-pointer items-center ${view === 'kanban' ? 'ring-2 ring-primary' : ''
+          className={`bg-surface p-2 flex gap-2 rounded items-center ${view === 'kanban' ? 'ring-2 ring-primary' : ''
             }`}
           onClick={() => onViewChange('kanban')}
         >
@@ -71,7 +82,7 @@ export const FilterKanban = ({
         </button>
 
         <button
-          className={`bg-surface p-2 flex gap-2 rounded cursor-pointer items-center ${view === 'timeline' ? 'ring-2 ring-primary' : ''
+          className={`bg-surface p-2 flex gap-2 rounded items-center ${view === 'timeline' ? 'ring-2 ring-primary' : ''
             }`}
           onClick={() => onViewChange('timeline')}
         >
@@ -82,14 +93,19 @@ export const FilterKanban = ({
 
       <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
         <div className="flex flex-col w-full sm:w-auto">
-          <label htmlFor="team" className="text-sm font-medium mb-1 text-gray-700">
+          <label className="text-sm font-medium mb-1 text-gray-700">
             Equipo
           </label>
           <select
-            id="team"
             value={value.teamId}
-            onChange={(e) => onChange({ ...value, teamId: e.target.value })}
-            className="w-full px-3 py-2 bg-background rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+            onChange={e =>
+              onChange({
+                ...value,
+                teamId: e.target.value,
+                assigned: 'all',
+              })
+            }
+            className="w-full px-3 py-2 bg-background rounded-lg border"
           >
             <option value="all">Todos los equipos</option>
             {teams.map(team => (
@@ -100,31 +116,41 @@ export const FilterKanban = ({
           </select>
         </div>
 
-        <div className="flex flex-col w-full sm:w-auto ">
-          <label htmlFor="assigned" className="text-sm font-medium mb-1 text-gray-700">
-            Asignación
-          </label>
-          <select
-            id="assigned"
-            value={value.assigned}
-            onChange={(e) => onChange({ ...value, assigned: e.target.value })}
-            className="w-full px-3 py-2 bg-background rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-          >
-            <option value="all">Todos</option>
-            <option value="assigned">Asignados</option>
-            <option value="unassigned">No asignados</option>
-          </select>
-        </div>
+        {value.teamId !== 'all' && selectedTeam?.members && (
+          <div className="flex flex-col w-full sm:w-auto">
+            <label className="text-sm font-medium mb-1 text-gray-700">
+              Miembro
+            </label>
+            <select
+              value={value.assigned}
+              onChange={e =>
+                onChange({ ...value, assigned: e.target.value })
+              }
+              className="w-full px-3 py-2 bg-background rounded-lg border"
+            >
+              <option value="all">Todos</option>
+              {selectedTeam.members.map(member => (
+                <option
+                  key={member.accountId || member.displayName}
+                  value={formatDisplayName(member.displayName)}
+                >
+                  {formatDisplayName(member.displayName)}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
-        <div className="flex flex-col w-full sm:hidden">
-          <label htmlFor="status" className="text-sm font-medium mb-1 text-gray-700">
+        <div className="flex flex-col w-full sm:w-auto">
+          <label className="text-sm font-medium mb-1 text-gray-700">
             Estado
           </label>
           <select
-            id="status"
             value={value.status}
-            onChange={(e) => onChange({ ...value, status: e.target.value })}
-            className="w-full px-3 py-2 bg-background rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+            onChange={e =>
+              onChange({ ...value, status: e.target.value })
+            }
+            className="w-full px-3 py-2 bg-background rounded-lg border"
           >
             {statusOptions.map(option => (
               <option key={option.value} value={option.value}>
@@ -133,20 +159,17 @@ export const FilterKanban = ({
             ))}
           </select>
         </div>
-        <div className="my-2 py-2 flex items-center px-4">
+
+        <div className="flex items-end">
           <button
             onClick={handleClear}
             className="
-            flex items-center gap-2
-            rounded-full
-            bg-primary
-            px-3 py-2
-            text-white text-xs font-semibold
-            transition
-            hover:opacity-90
-            active:scale-95
-            cursor-pointer
-          "
+              flex items-center gap-2
+              rounded-full bg-primary
+              px-4 py-2 text-white
+              text-xs font-semibold
+              hover:opacity-90
+            "
           >
             <IconRefresh size={16} />
             Limpiar
@@ -154,5 +177,5 @@ export const FilterKanban = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

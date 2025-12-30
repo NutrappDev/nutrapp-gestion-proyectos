@@ -13,12 +13,14 @@ import { getUptimeRobotMonitoring } from '@/lib/uptimeRobotApi'
 interface UseJiraProps {
   viewIssuesProjects?: boolean
   viewIssuesUsers?: boolean
+  viewUsers?: boolean
   project?: JiraProject
 }
 
 export const useJira = ({
   viewIssuesProjects = false,
   viewIssuesUsers = false,
+  viewUsers = false,
   project,
 }: UseJiraProps = {}) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -28,6 +30,7 @@ export const useJira = ({
   const [projects, setProjects] = useState<JiraProject[]>([])
   const [users, setUsers] = useState<JiraUsers[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [OnlyUsers, setOnlyUsers] = useState<JiraUsers[]>([])
 
   const issuesCache = useRef<Record<string, JiraIssue[]>>({})
   const isFetchingUsers = useRef(false)
@@ -73,6 +76,19 @@ export const useJira = ({
     } finally {
       setIsLoading(false)
       isFetchingUsers.current = false
+    }
+  }
+
+  const getOnlyUsers = async () => {
+    try {
+      const fetchedUsers = await fetchUsers()
+      setOnlyUsers(fetchedUsers)
+      return fetchedUsers
+    } catch (err: any) {
+      setError(err?.message || 'Error al obtener usuarios')
+      throw err
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -159,6 +175,12 @@ export const useJira = ({
   }, [viewIssuesUsers])
 
   useEffect(() => {
+    if (viewUsers) {
+      getOnlyUsers()
+    }
+  }, [viewUsers])
+
+  useEffect(() => {
     if (project) {
       getIssuesByProject(project)
     }
@@ -171,8 +193,10 @@ export const useJira = ({
     issuesByUser,
     projects,
     users,
+    OnlyUsers,
     error,
     getUsers,
+    getOnlyUsers,
     getProjects,
     getIssuesByProject,
     getProgresProject,

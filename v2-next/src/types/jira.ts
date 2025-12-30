@@ -38,7 +38,8 @@ export interface JiraIssue {
   url: string;
   reporter: JiraAssignee | null;
   lastComment?: JiraComment;
-  fields:any
+  fields:any;
+  self:string
 }
 
 export type StatusCategory = 'Por hacer' | 'En curso' | 'Listo';
