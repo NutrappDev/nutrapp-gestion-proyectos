@@ -2,8 +2,6 @@
 
 import { formatDisplayName } from '@/utils/jira'
 import {
-  IconTimeline,
-  IconLayoutKanban,
   IconRefresh,
 } from '@tabler/icons-react'
 
@@ -22,21 +20,17 @@ interface FilterKanbanProps {
     assigned: string
     status: string
   }
-  view: 'kanban' | 'timeline'
   onChange: (filters: {
     teamId: string
     assigned: string
     status: string
   }) => void
-  onViewChange: (view: 'kanban' | 'timeline') => void
 }
 
 export const FilterKanban = ({
   teams,
   value,
-  view,
   onChange,
-  onViewChange,
 }: FilterKanbanProps) => {
   const statusOptions = [
     { value: 'all', label: 'Todos los estados' },
@@ -68,28 +62,9 @@ export const FilterKanban = ({
         flex flex-col sm:flex-row
         justify-start sm:justify-between
         items-start sm:items-center
-        gap-4
+        gap-4 sm:justify-end
       "
     >
-      <div className="flex gap-2 w-full sm:w-auto">
-        <button
-          className={`bg-surface p-2 flex gap-2 rounded items-center ${view === 'kanban' ? 'ring-2 ring-primary' : ''
-            }`}
-          onClick={() => onViewChange('kanban')}
-        >
-          <IconLayoutKanban />
-          <span className="hidden sm:inline">List view</span>
-        </button>
-
-        <button
-          className={`bg-surface p-2 flex gap-2 rounded items-center ${view === 'timeline' ? 'ring-2 ring-primary' : ''
-            }`}
-          onClick={() => onViewChange('timeline')}
-        >
-          <IconTimeline />
-          <span className="hidden sm:inline">Timeline</span>
-        </button>
-      </div>
 
       <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
         <div className="flex flex-col w-full sm:w-auto">

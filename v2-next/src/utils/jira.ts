@@ -1,3 +1,5 @@
+import { JiraIssue } from "@/types/jira"
+
 const daysBetween = (start: Date, end: Date) => {
   const msPerDay = 1000 * 60 * 60 * 24
   const startUTC = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())
@@ -9,25 +11,36 @@ const daysBetween = (start: Date, end: Date) => {
   )
 }
 
-export const getIssueProgressByComments = (
-  issue: any
-): number => {
-  const startDateRaw =
-    issue.fields.customfield_startDate || issue.fields.created
-  const dueDateRaw = issue.fields.duedate
+export const getIssueProgressByComments = (issue: any) => {
+  const startDateRaw = issue.fields.customfield_10015 || issue.fields.created;
+  const dueDateRaw = issue.fields.duedate;
 
-  if (!dueDateRaw) return 0
+  if (!dueDateRaw) return { currentComments: 0, expectedComments: 0, progress: 0 };
 
-  const startDate = new Date(startDateRaw)
-  const dueDate = new Date(dueDateRaw)
+  const startDate = new Date(startDateRaw);
+  const dueDate = new Date(dueDateRaw);
 
-  const expectedComments = daysBetween(startDate, dueDate)
-  const currentComments = issue.fields.comment?.total ?? 0
+  const expectedComments = daysBetween(startDate, dueDate);
 
-  const progress = (currentComments / expectedComments) * 100
+  const assigneeId = issue.fields.assignee?.accountId;
 
-  return Math.min(Math.round(progress), 100)
-}
+  if (!assigneeId) return { currentComments: 0, expectedComments, progress: 0 };
+
+  const comments = issue.fields.comment?.comments || [];
+  const currentComments = comments.filter(
+    (c: any) => c.author.accountId === assigneeId
+  ).length;
+
+  const progress = (currentComments / expectedComments) * 100;
+
+  return {
+    currentComments,
+    expectedComments,
+    progress: Math.min(Math.round(progress), 100),
+  };
+};
+
+
 
 
 export const getEpicProgressByDoneIssues = (
@@ -61,7 +74,7 @@ export const formatDisplayName = (name: string): string => {
     .map(part =>
       part
         .normalize('NFD')
-        .replace(/[\u0301\u0300\u0302\u0308]/g, '') 
+        .replace(/[\u0301\u0300\u0302\u0308]/g, '')
         .toLowerCase()
     )
 
@@ -75,3 +88,13 @@ export const formatDisplayName = (name: string): string => {
   return `${capitalize(firstName)} ${capitalize(lastName)}`
 }
 
+export const countIssuesForMember = (
+  memberName: string,
+  issues: JiraIssue[]
+): number => {
+  const memberIssues = issues.filter(
+    issue => issue.fields.assignee?.displayName === memberName
+  );
+
+  return memberIssues.length;
+};

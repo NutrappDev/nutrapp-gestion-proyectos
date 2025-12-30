@@ -59,6 +59,6 @@ export const useTeams = () => {
 
   return {
     teams,
-    isLoading: isLoading || isLoadingUsers,
+    isLoadingTeams: isLoading || isLoadingUsers,
   }
 }

@@ -15,7 +15,7 @@ export default function CardUsers({
   initials, 
   color,
   onClick,
-  isSelected
+  isSelected,
 }: CardProps) {
   return (
     <div 

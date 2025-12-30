@@ -12,6 +12,8 @@ export default function DashboardPage() {
   const { projects } = useJira({ viewIssuesProjects: true });
   const { monitoring } = useUptimeRobot({ viewMonitoring: true })
   const [selectedProject, setSelectedProject] = useState<string>("all");
+  const [timeFilter, setTimeFilter] = useState('24h')
+  const [statusFilter, setStatusFilter] = useState('all')
 
   console.log(monitoring)
 
@@ -21,8 +23,15 @@ export default function DashboardPage() {
 
       <div className="bg-background p-2 rounded-lg h-full flex flex-col w-full">
         <div className="w-full flex justify-between items-center text-sm opacity-70">
-          last 24 hours
-          <FilterUptimer />
+          <div className="flex gap-4 p-2">
+            <span>Periodo: {timeFilter}</span>
+          </div>
+          <FilterUptimer
+            timeFilter={timeFilter}
+            setTimeFilter={setTimeFilter}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+          />
         </div>
 
         <div className="overflow-y-scroll sm:overflow-auto h-64 p-2 sm:h-full w-full flex flex-col sm:flex-row gap-4">
@@ -59,6 +68,8 @@ export default function DashboardPage() {
                   isSelected={project.id === selectedProject}
                   onClick={() => setSelectedProject(project.id)}
                   monitors={projectMonitors}
+                  timeFilter={timeFilter}
+                  statusFilter={statusFilter}
                 />
               )
             })}

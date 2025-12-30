@@ -22,6 +22,9 @@ interface KanbanColumnProps {
     assigned: string
     status: string
   }
+  issuesByUser:JiraIssue[],
+  isLoading: boolean,
+  error:string
 }
 
 const getAssigneeName = (issue: JiraIssue): string | null =>
@@ -32,8 +35,7 @@ const getAssigneeName = (issue: JiraIssue): string | null =>
 const getStoryPoints = (issue: JiraIssue): number =>
   Number(issue.fields?.customfield_10297?.value) || 0
 
-export const KanbanColumn = ({ filters }: KanbanColumnProps) => {
-  const { issuesByUser, isLoading, error } = useJira({ viewIssuesUsers: true })
+export const KanbanColumn = ({ filters, issuesByUser, isLoading, error }: KanbanColumnProps) => {
 
   const rawIssues: JiraIssue[] = Array.isArray(issuesByUser)
     ? issuesByUser

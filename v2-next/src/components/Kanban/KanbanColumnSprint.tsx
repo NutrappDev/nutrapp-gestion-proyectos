@@ -297,18 +297,18 @@ export const KanbanColumnSprint = ({ projectId }: KanbanColumnProps) => {
 
                                           <div className="w-full mt-1">
                                             <span className="text-[10px] opacity-70">
-                                              Progreso ({issue.fields.comment.total} comentarios)
+                                              Progreso ({progress.currentComments} comentarios de {progress.expectedComments})
                                             </span>
 
                                             <div className="bg-gray-200 dark:bg-white/60 w-full h-2 rounded overflow-hidden">
                                               <div
                                                 className="bg-emerald-500 h-2 transition-all"
-                                                style={{ width: `${progress}%` }}
+                                                style={{ width: `${progress.progress}%` }}
                                               />
                                             </div>
 
                                             <span className="text-[10px] opacity-60">
-                                              {progress}% esperado
+                                              {progress.progress}% esperado
                                             </span>
                                           </div>
                                         </div>
@@ -357,16 +357,16 @@ export const KanbanColumnSprint = ({ projectId }: KanbanColumnProps) => {
 
                                 <div className="w-full">
                                   <span className="text-[10px] opacity-70">
-                                    Progreso ({issue.fields.comment.total} comentarios)
+                                    Progreso ({progress.currentComments} comentarios de {progress.expectedComments}) 
                                   </span>
                                   <div className="bg-gray-200 dark:bg-white/60 w-full h-2 rounded overflow-hidden">
                                     <div
                                       className="bg-emerald-500 h-2 transition-all"
-                                      style={{ width: `${progress}%` }}
+                                      style={{ width: `${progress.progress}%` }}
                                     />
                                   </div>
                                   <span className="text-[10px] opacity-60">
-                                    {progress}% esperado
+                                    {progress.progress}% esperado
                                   </span>
                                 </div>
                               </div>
@@ -401,16 +401,16 @@ export const KanbanColumnSprint = ({ projectId }: KanbanColumnProps) => {
 
                                 <div className="w-full">
                                   <span className="text-[10px] opacity-70">
-                                    Progreso ({issue.fields.comment.total} comentarios)
+                                    Progreso ({progress.currentComments} comentarios de {progress.expectedComments}) 
                                   </span>
                                   <div className="bg-gray-200 dark:bg-white/60 w-full h-2 rounded overflow-hidden">
                                     <div
                                       className="bg-emerald-500 h-2 transition-all"
-                                      style={{ width: `${progress}%` }}
+                                      style={{ width: `${progress.progress}%` }}
                                     />
                                   </div>
                                   <span className="text-[10px] opacity-60">
-                                    {progress}% esperado
+                                    {progress.progress}% esperado
                                   </span>
                                 </div>
                               </div>
