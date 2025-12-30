@@ -3,20 +3,21 @@ export interface Team {
   name: string;
   label: string;
   members: string[];
-  initials: string;
+  initials: string; 
   color: string;
 }
 
 export const TEAM_DEVELOPMENT_MEMBERS = [
-  'mario eraso',
+  'mario eraso', 
   'kevin aguilera',
-  'richard medina',
-  'isabel Gomez',
-  'maría alejandra pedraza cárdenas',
+  'richard medina', 
+  'isabel Gomez', 
+  'maría alejandra pedraza cárdenas', 
   'david sarmiento',
   'Fabián Mauricio Romero Lugo',
   'JORGE EDUARDO GARAY GUTIERREZ',
-  'Jhelcy Sandoval'
+  'Jhelcy Sandoval',
+  'Sebastian Andres Alvarez Lambertinez'
 ];
 
 export const TEAM_DESIGN_MEMBERS = [
@@ -26,11 +27,11 @@ export const TEAM_DESIGN_MEMBERS = [
 ];
 
 export const TEAM_OPERATIONS_MEMBERS = [
-  'Richard Enrique Torres Pinzón',
+  'Richard Enrique Torres Pinzón', 
   'Miller Ladino Osorio',
   'Juan Medina',
   'Evelyn Herreño',
-  'Yefer Enrique García Moncada',
+  'Yefer Enrique García Moncada', 
   'Michelle Carolina Castro Muñoz',
   'David Alberto Espitia Quiceno',
   'Dannerys Gomez Polanco',
@@ -77,7 +78,7 @@ export const TEAMS: Team[] = [
   }
 ];
 
-export const ALL_ASSIGNEES = [...TEAM_DEVELOPMENT_MEMBERS, ...TEAM_OPERATIONS_MEMBERS, ...TEAM_DESIGN_MEMBERS, ...TEAM_INFRAESTRUCTURA_MEMBERS].sort((a, b) => a.localeCompare(b));
+export const ALL_ASSIGNEES = [...TEAM_DEVELOPMENT_MEMBERS, ...TEAM_OPERATIONS_MEMBERS, ...TEAM_DESIGN_MEMBERS,...TEAM_INFRAESTRUCTURA_MEMBERS].sort((a, b) => a.localeCompare(b));
 
 export const findTeamByAssignee = (assigneeName: string): Team | undefined => {
   const normalizedAssignee = assigneeName.trim().toLowerCase();

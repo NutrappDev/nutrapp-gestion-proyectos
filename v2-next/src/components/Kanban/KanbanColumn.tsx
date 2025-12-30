@@ -23,7 +23,6 @@ interface KanbanColumnProps {
   }
 }
 
-
 const normalizeName = (name: string): string =>
   name.trim().toLowerCase()
 
@@ -41,7 +40,6 @@ const getStatusCategory = (issue: JiraIssue): string =>
 const getStoryPoints = (issue: JiraIssue): number =>
   Number(issue.fields?.customfield_10016) || 0
 
-
 export const KanbanColumn = ({ filters }: KanbanColumnProps) => {
   const { issuesByUser, isLoading, error } = useJira({ viewIssuesUsers: true })
 
@@ -50,72 +48,61 @@ export const KanbanColumn = ({ filters }: KanbanColumnProps) => {
     : []
 
   const columns = [
-    { status: "Por hacer", id: "todo", bgColor: "bg-blue-600", textColor: "text-white" },
-    { status: "En curso", id: "in-progress", bgColor: "bg-yellow-600", textColor: "text-white" },
-    { status: "Esperando aprobación", id: "waiting-approval", bgColor: "bg-purple-600", textColor: "text-white" },
-    { status: "Detenida", id: "blocked", bgColor: "bg-red-600", textColor: "text-white" },
+    { status: "Backlog", bgColor: "bg-blue-600", textColor: "text-white" },
+    { status: "Por hacer", bgColor: "bg-blue-500", textColor: "text-white" },
+    { status: "En proceso", bgColor: "bg-yellow-500", textColor: "text-black" },
+    { status: "Revisión QA", bgColor: "bg-yellow-600", textColor: "text-white" },
+    { status: "Esperando aprobación", bgColor: "bg-green-600", textColor: "text-white" },
+    { status: "Detenido", bgColor: "bg-red-600", textColor: "text-white" },
   ]
 
   const filteredIssues = useMemo(() => {
     return rawIssues.filter((issue) => {
       const assigneeName = getAssigneeName(issue)
 
+      // Filtro por asignado
       if (filters.assigned !== "all") {
         if (filters.assigned === "assigned" && !assigneeName) return false
         if (filters.assigned === "unassigned" && assigneeName) return false
       }
 
+      // Filtro por equipo
       if (filters.teamId !== "all") {
         if (!assigneeName) return false
-
         const team = findTeamByAssignee(assigneeName)
         if (!team || team.id !== filters.teamId) return false
       }
 
+      // Filtro por status
       if (filters.status && filters.status !== "all") {
-        const statusMap: Record<string, string[]> = {
-          pending: ["Por hacer"],
-          "in-progress": ["En curso"],
-          waiting: ["Esperando aprobación"],
-          blocked: ["Detenida"],
-        }
-
-        const allowedStatuses = statusMap[filters.status]
-        const issueStatus = getStatusName(issue)
-
-        if (allowedStatuses && !allowedStatuses.includes(issueStatus)) {
-          return false
-        }
+        const issueStatusName = issue.fields.status.name
+        if (filters.status === "pending" && !["Backlog", "Por hacer"].includes(issueStatusName)) return false
+        if (filters.status === "in-progress" && !["En proceso", "Revisión QA", "Esperando aprobación", "Detenido"].includes(issueStatusName)) return false
+        if (filters.status === "done" && issue.fields.status.statusCategory.key !== "done") return false
       }
 
       return true
     })
   }, [rawIssues, filters.assigned, filters.teamId, filters.status])
 
-
   const groupedIssues: GroupedIssues = useMemo(() => {
-    return columns.reduce((acc, column) => {
-      const columnIssues = filteredIssues.filter(
-        (issue) =>
-          getStatusName(issue) === column.status ||
-          getStatusCategory(issue) === column.status
-      )
-
-      const totalPoints = columnIssues.reduce(
-        (sum, issue) => sum + getStoryPoints(issue),
-        0
-      )
-
-      acc[column.status] = {
-        status: columnIssues,
-        total: columnIssues.length,
-        points: totalPoints,
-      }
-
+    const grouped: GroupedIssues = columns.reduce((acc, column) => {
+      acc[column.status] = { status: [], total: 0, points: 0 }
       return acc
     }, {} as GroupedIssues)
-  }, [filteredIssues, columns])
 
+    filteredIssues.forEach((issue) => {
+      const issueStatusName = issue.fields.status.name
+      const column = columns.find(col => col.status === issueStatusName)
+      if (column) {
+        grouped[column.status].status.push(issue)
+        grouped[column.status].points += getStoryPoints(issue)
+        grouped[column.status].total += 1
+      }
+    })
+
+    return grouped
+  }, [filteredIssues, columns])
 
   if (isLoading) {
     return (
@@ -146,7 +133,7 @@ export const KanbanColumn = ({ filters }: KanbanColumnProps) => {
 
             return (
               <div
-                key={column.id}
+                key={column.status}
                 className="flex-shrink-0 w-64 sm:w-72 bg-background rounded-lg flex flex-col h-full"
               >
                 <div className="p-4">

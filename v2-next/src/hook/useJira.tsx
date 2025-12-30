@@ -1,12 +1,14 @@
+'use client'
+
 import {
   fetchIssuesByProject,
   fetchUsers,
   fetchProjects,
   fetchIssuesByUser,
-  fetchProjectProgress,
 } from '@/lib/jiraApi'
 import { useEffect, useRef, useState } from 'react'
 import { JiraIssue, JiraProject, JiraUsers } from '@/types/jira'
+import { getUptimeRobotMonitoring } from '@/lib/uptimeRobotApi'
 
 interface UseJiraProps {
   viewIssuesProjects?: boolean
@@ -15,49 +17,66 @@ interface UseJiraProps {
 }
 
 export const useJira = ({
-  viewIssuesProjects,
-  viewIssuesUsers,
+  viewIssuesProjects = false,
+  viewIssuesUsers = false,
   project,
 }: UseJiraProps = {}) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingIssues, setIsLoadingIssues] = useState(false)
   const [issues, setIssues] = useState<JiraIssue[]>([])
-  const [error, setError] = useState<string | null>(null)
+  const [issuesByUser, setIssuesByUser] = useState<JiraIssue[]>([])
   const [projects, setProjects] = useState<JiraProject[]>([])
   const [users, setUsers] = useState<JiraUsers[]>([])
-  const [issuesByUser, setIssuesByUser] = useState<JiraIssue[]>([])
+  const [error, setError] = useState<string | null>(null)
 
-  const hasFetched = useRef(false)
+  const issuesCache = useRef<Record<string, JiraIssue[]>>({})
+  const isFetchingUsers = useRef(false)
+
+  /* ---------------- USERS ---------------- */
 
   const getUsers = async () => {
+    if (isFetchingUsers.current) return
+    isFetchingUsers.current = true
+
     setIsLoading(true)
     try {
       const fetchedUsers = await fetchUsers()
+      setUsers(fetchedUsers)
 
-      const assignableUsers = fetchedUsers.filter(
-        (user) => user.accountType === 'atlassian'
-      )
+      const allIssues: JiraIssue[] = []
 
-      setUsers(assignableUsers)
+      for (const user of fetchedUsers) {
+        if (!user.accountId) continue
 
-      if (assignableUsers.length) {
-        const issuesByProject = await Promise.all(
-          assignableUsers.map((user) =>
-            fetchIssuesByUser(user.accountId)
-          )
-        )
+        if (issuesCache.current[user.accountId]) {
+          allIssues.push(...issuesCache.current[user.accountId])
+          continue
+        }
 
-        setIssuesByUser(issuesByProject.flat())
+        const response = await fetchIssuesByUser(user.accountId)
+
+        const userIssues: JiraIssue[] = Array.isArray(response)
+          ? response
+          : Array.isArray((response as any)?.issues)
+            ? (response as any).issues
+            : []
+
+        issuesCache.current[user.accountId] = userIssues
+        allIssues.push(...userIssues)
       }
 
-      return assignableUsers
+      setIssuesByUser(allIssues)
+      return fetchedUsers
     } catch (err: any) {
       setError(err?.message || 'Error al obtener usuarios')
       throw err
     } finally {
       setIsLoading(false)
+      isFetchingUsers.current = false
     }
   }
+
+  /* ---------------- PROJECTS ---------------- */
 
   const getProjects = async () => {
     setIsLoading(true)
@@ -70,19 +89,6 @@ export const useJira = ({
       throw err
     } finally {
       setIsLoading(false)
-    }
-  }
-
-  const getIssuesByProject = async (project: JiraProject) => {
-    setIsLoadingIssues(true)
-    try {
-      const projectIssues = await fetchIssuesByProject(project.name)
-      setIssues(projectIssues.flat())
-    } catch (err: any) {
-      setError(err?.message || 'Error al obtener issues del proyecto')
-      throw err
-    } finally {
-      setIsLoadingIssues(false)
     }
   }
 
@@ -123,31 +129,49 @@ export const useJira = ({
     }
   }
 
-  useEffect(() => {
-    if (hasFetched.current) return
-    hasFetched.current = true
+  /* ---------------- ISSUES ---------------- */
 
+  const getIssuesByProject = async (project: JiraProject) => {
+    setIsLoadingIssues(true)
+    try {
+      const projectIssues = await fetchIssuesByProject(project.name)
+      setIssues(projectIssues.flat())
+    } catch (err: any) {
+      setError(err?.message || 'Error al obtener issues del proyecto')
+      throw err
+    } finally {
+      setIsLoadingIssues(false)
+    }
+  }
+
+  /* ---------------- EFFECTS ---------------- */
+
+  useEffect(() => {
     if (viewIssuesProjects) {
       getProjects()
     }
+  }, [viewIssuesProjects])
 
+  useEffect(() => {
     if (viewIssuesUsers) {
       getUsers()
     }
+  }, [viewIssuesUsers])
 
+  useEffect(() => {
     if (project) {
       getIssuesByProject(project)
     }
-  }, [viewIssuesProjects, viewIssuesUsers, project])
+  }, [project])
 
   return {
     isLoading,
+    isLoadingIssues,
     issues,
-    error,
+    issuesByUser,
     projects,
     users,
-    issuesByUser,
-    isLoadingIssues,
+    error,
     getUsers,
     getProjects,
     getIssuesByProject,

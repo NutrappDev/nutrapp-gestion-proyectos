@@ -11,9 +11,9 @@ export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [filters, setFilters] = useState({
-    teamId: 'all',
-    assigned: 'all',
-    status: 'all', 
+    teamId: 'all',        
+    assigned: 'all',      
+    status: 'all',        
   });
 
   const [view, setView] = useState<'kanban' | 'timeline'>('kanban');

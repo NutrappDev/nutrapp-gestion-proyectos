@@ -1,3 +1,5 @@
+'use client';
+
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import type { JiraUsers, JiraIssue, JiraProject } from '@/types/jira';
 

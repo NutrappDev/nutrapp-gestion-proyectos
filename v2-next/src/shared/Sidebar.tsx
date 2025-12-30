@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 
 interface SidebarProps {
   isActive: boolean;
-  setisActive?:(active: boolean) => void;
+  setisActive?: (active: boolean) => void;
 }
 
 interface Route {
@@ -17,6 +17,7 @@ const Sidebar = ({ isActive, setisActive }: SidebarProps) => {
 
   const routes: Route[] = [
     { path: '/dashboard', label: 'Dashboard' },
+    { path: '/sprints', label: 'Sprints' },
     { path: '/home', label: 'Home' },
   ];
 

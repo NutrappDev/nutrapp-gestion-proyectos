@@ -9,14 +9,25 @@ export interface JiraUsers {
   accountId: any; 
   avatarUrls: { [x: string]: any;}
   accountType: string;
+  displayName: string;
+  email: string;
 }
+
+export interface IssuesStatusCategory {
+  self: string;     
+  id: number;         
+  key: string;        
+  colorName: string;  
+  name: string;      
+}
+
 
 export interface JiraIssue {
   id: string;
   key: string;
   summary: string;
   status: string;
-  statusCategory: string;
+  statusCategory: IssuesStatusCategory;
   assignee: JiraAssignee | null;
   priority: string;
   updated: string;
