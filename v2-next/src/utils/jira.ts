@@ -41,8 +41,6 @@ export const getIssueProgressByComments = (issue: any) => {
 };
 
 
-
-
 export const getEpicProgressByDoneIssues = (
   epicId: string,
   issues: any[]
@@ -97,4 +95,12 @@ export const countIssuesForMember = (
   );
 
   return memberIssues.length;
+};
+
+export const getIssuesInProgress = (issues: JiraIssue[]) => {
+  return (
+    issues?.filter(
+      issue => issue?.fields?.status?.name === 'En progreso'
+    ).length ?? 0
+  );
 };

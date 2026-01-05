@@ -61,7 +61,7 @@ export const KanbanColumnSprint = ({ projectId }: KanbanColumnProps) => {
     getIssuesByProject,
     getProgresProject
   } = useJira({
-    viewIssuesProjects: true,
+    viewProjects: true,
   })
 
   const [openProjectId, setOpenProjectId] = useState<string | null>(null)

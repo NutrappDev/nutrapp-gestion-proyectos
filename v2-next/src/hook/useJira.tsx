@@ -5,20 +5,21 @@ import {
   fetchUsers,
   fetchProjects,
   fetchIssuesByUser,
+  fetchAllIssues,
 } from '@/lib/jiraApi'
 import { useEffect, useRef, useState } from 'react'
-import { JiraIssue, JiraProject, JiraUsers } from '@/types/jira'
+import { JiraIssue, JiraProject, JiraProjectsResponse, JiraUsers } from '@/types/jira'
 import { formatDisplayName } from '@/utils/jira'
 
 interface UseJiraProps {
-  viewIssuesProjects?: boolean
+  viewProjects?: boolean
   viewIssuesUsers?: boolean
   viewUsers?: boolean
   project?: JiraProject
 }
 
 export const useJira = ({
-  viewIssuesProjects = false,
+  viewProjects = false,
   viewIssuesUsers = false,
   viewUsers = false,
   project,
@@ -31,6 +32,7 @@ export const useJira = ({
   const [users, setUsers] = useState<JiraUsers[]>([])
   const [OnlyUsers, setOnlyUsers] = useState<JiraUsers[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [responseProjects, setResponseProjects] = useState<JiraProjectsResponse | null>()
 
   const issuesCache = useRef<Record<string, JiraIssue[]>>({})
   const isFetchingUsers = useRef(false)
@@ -127,8 +129,21 @@ export const useJira = ({
     setIsLoading(true)
     try {
       const fetchedProjects = await fetchProjects()
-      setProjects(fetchedProjects.values ?? [])
-      return fetchedProjects.values
+
+      const filteredProjects =
+        fetchedProjects.values?.filter(
+          (project: JiraProject) =>
+            project.name?.toUpperCase().startsWith("DG")
+        ) ?? []
+
+      setProjects(filteredProjects)
+      setResponseProjects({
+        ...fetchedProjects,
+        values: filteredProjects,
+        total: filteredProjects.length,
+      })
+
+      return filteredProjects
     } catch (err: any) {
       setError(err?.message || 'Error al obtener proyectos')
       throw err
@@ -176,7 +191,7 @@ export const useJira = ({
   }
 
   /* ---------------- EFFECTS ---------------- */
-  useEffect(() => { if (viewIssuesProjects) getProjects() }, [viewIssuesProjects])
+  useEffect(() => { if (viewProjects) getProjects() }, [viewProjects])
   useEffect(() => { if (viewIssuesUsers) getUsers() }, [viewIssuesUsers])
   useEffect(() => { if (viewUsers) getOnlyUsers() }, [viewUsers])
   useEffect(() => { if (project) getIssuesByProject(project) }, [project])
@@ -190,6 +205,7 @@ export const useJira = ({
     users,
     OnlyUsers,
     error,
+    responseProjects,
     getUsers,
     getOnlyUsers,
     getProjects,

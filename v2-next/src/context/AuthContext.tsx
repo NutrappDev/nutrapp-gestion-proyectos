@@ -58,11 +58,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push('/');
   };
 
+  const verifyToken = async(token:string) => {
+    try {
+      const response = await api.post('/auth/validateToken', {token})
+      return response.data.valid
+    } catch (error) {
+      return false
+    }
+  }
+
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsAuthenticated(!!token);
-    setIsLoading(false);
+    const checkAuth = async () => {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        setIsAuthenticated(false);
+        setIsLoading(false);
+        return;
+      }
+
+      const isValid = await verifyToken(token);
+
+      if (!isValid) {
+        localStorage.removeItem('token');
+        setIsAuthenticated(false);
+        router.push('/');
+      } else {
+        setIsAuthenticated(true);
+      }
+
+      setIsLoading(false);
+    };
+
+    checkAuth();
   }, []);
+
 
  
   useEffect(() => {
@@ -78,6 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (isAuthenticated && pathname === '/') {
       router.push('/home');
     }
+
   }, [pathname, isAuthenticated, isLoading, router]);
 
   return (

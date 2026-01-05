@@ -28,8 +28,6 @@ export default function HomePage() {
     [teams, filters.teamId]
   )
 
-
-
   const getInitials = (name: string) =>
     name
       .split(' ')

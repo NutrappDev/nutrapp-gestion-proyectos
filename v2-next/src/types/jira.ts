@@ -103,3 +103,13 @@ export interface JiraDocContent {
 }
 
 export interface FetchIssuesParams { status?: string | string[]; project?: string; assignee?: string | string[]; page?: number; pageSize?: number; }
+
+export interface JiraProjectsResponse {
+  isLast: boolean;
+  maxResults: number;
+  startAt: number;
+  total: number;
+  values: JiraProject[];
+  nextPage?: string;
+  self: string;
+}

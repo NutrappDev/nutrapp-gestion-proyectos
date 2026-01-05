@@ -68,7 +68,6 @@ export const fetchUsers = async (query: string = "''"): Promise<JiraUsers[]> => 
   return data;
 };
 
-
 export const fetchProjects = async () => {
   const { data } = await jiraApiClient.get('/jira/projects');
   return data;
@@ -86,57 +85,6 @@ export const fetchIssuesByUser = async (accountId: string): Promise<JiraIssue[]>
   return data;
 };
 
-export const fetchAllIssues = async (jql): Promise<JiraIssue[]> => {
-  const { data } = await jiraApiClient.post('/jira/issues/all', { jql });
-  return data;
-};
-
-export const fetchIssueTotals = async (type: 'assignee' | 'status' | 'project') => {
-  const { data } = await jiraApiClient.get('/jira/issues/totals', { params: { type } });
-  return data;
-};
-
-export const fetchStoryPoints = async (type: 'assignee' | 'project') => {
-  const { data } = await jiraApiClient.get('/jira/issues/story-points', { params: { type } });
-  return data;
-};
-
-export const fetchIssueProgress = async (issueKey: string, cutoff?: string) => {
-  const { data } = await jiraApiClient.get('/jira/progress/issue', { params: { issueKey, cutoff } });
-  return data;
-};
-
-export const fetchEpicProgress = async (epicKey: string, cutoff?: string) => {
-  const { data } = await jiraApiClient.get('/jira/progress/epic', { params: { epicKey, cutoff } });
-  return data;
-};
-
-export const fetchProjectProgress = async (projectKey: string) => {
-  const totalJql = `project = '${projectKey}'`;
-  const doneJql = `project = '${projectKey}' AND statusCategory = Done`;
-
-  const [totalRes, doneRes] = await Promise.all([
-    jiraApiClient.post('/jira/progress/project', {
-      jql: totalJql
-    }),
-    jiraApiClient.post('/jira/progress/project', {
-      jql: doneJql
-    }),
-  ]);
-
-  const total = totalRes.data.total;
-  const done = doneRes.data.total;
-
-  const progress = total > 0 ? Math.round((done / total) * 100) : 0;
-
-  return {
-    total,
-    done,
-    progress,
-  };
-};
-
-
 export const addComment = async (issueKey: string, comment: string) => {
   const { data } = await jiraApiClient.post('/jira/issues/comment', { issueKey, comment });
   return data;
@@ -151,3 +99,23 @@ export const deleteComment = async (issueKey: string, commentId: string) => {
   const { data } = await jiraApiClient.delete('/jira/issues/comment', { params: { issueKey, commentId } });
   return data;
 };
+
+export const fetchAllIssues = async (nextPageToken?: string) => {
+  const payload = {
+    jql: 'created >= -182d ORDER BY created DESC',
+    fields: [
+      'summary',
+      'status',
+      'project',
+      'issuetype',
+      'parent',
+      'customfield_10014',
+      'duedate',
+      'priority'
+    ],
+    ...(nextPageToken && { nextPageToken })
+  }
+
+  const { data } = await jiraApiClient.post('/jira/issues/all', payload)
+  return data
+}
